@@ -2,6 +2,7 @@ import re
 import itertools
 from copy import copy
 from dataclasses import dataclass
+from collections import defaultdict #tarjan
 
 @dataclass
 class Automaton:
@@ -124,6 +125,54 @@ def remove_states_with_no_arrows_out(a):
                 a.states.remove(s)
     return a
 
+def SCCUtil(a,u,low,disc,stackMember,st,time):
+    """Recursive function that find strongly connected components using DFS traversal.
+
+    u --> the state to be visited next
+    disc[] --> stores discovery times of visited states
+    low[] -- >> earliest visited vertex (the vertex with minimum discovery time) that can be reached from subtree rooted with current vertex
+    st -- >> to store all the connected ancestors (could be part of SCC)
+    stackMember[] --> bit/index array for faster check whether a node is in stack
+    """
+    
+    # Initialize discovery time and low value
+    disc[u]=time
+    low[u]=time
+    stackMember[u]=True
+    st.append(u)
+
+    # Go through all states adjacent to this
+    for v in a.states:
+        # If v is not visited yet, then recur for it
+        if disc[v]==-1:
+            SCCUtil(a,v,low,disc,stackMember,st,time)
+            # Check if the subtree rooted with v has a connection to on of the ancestors of u
+            low[u]=min(low[u],low[w])
+        elif stackMember[v]==True:
+            low[u]=min(low[u],disc[v])
+        # Head node found, pop the stack and print an SCC
+        w=-1    # To store stack extracted states
+        if low[u]==disc[u]:
+            while w!=u:
+                w=st.pop()
+                print(w)
+                stackMember[w]=False
+
+def SCC(a):
+    """Function to do DFS traversal"""
+
+    # Mark all states as not visited
+    disc=[-1]*len(a.states)
+    low=[-1]*len(a.states)
+    stackMember=[False]*len(a.states)
+    st=[]
+
+    # Call the recursive helper function to find articulation points in DFS tree rooted with vertex i
+    time=0
+    for i in range(len(a.states)):
+        if disc[i]==-1:
+            SCCUtil(a,i,low,disc,stackMember,st,time)
+            time+=1
 
 def find_and_change_cycles(a):
     accept2=set()
@@ -207,6 +256,8 @@ with open(input("Enter a file with the second automaton: ")) as f2:
 # construction
 a=intersection(a1,a2)
 a=remove_states_with_no_arrows_out(a)
+
+SCC(a)
 
 # 3rd optimization: looking for cycles
 a=find_and_change_cycles(a)
