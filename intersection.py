@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Automaton:
+    """Data class representing an automaton."""
+
     start: set
     transitions: set
     accept: set
@@ -12,9 +14,11 @@ class Automaton:
     states: set
 
 def load_data(file):
-    start=set()         # set of start states
-    transitions=set()   # set of transitions: [input, start, end]
-    accept=set()        # set of accept states
+    """Loads data from .ba file to object Automaton"""
+
+    start=set()         # start states
+    transitions=set()   # transitions: [input, start, end]
+    accept=set()        # accept states
     alphabet=set()      # set of all input symbols
     states=set()        # set of all states
 
@@ -41,21 +45,25 @@ def load_data(file):
                 accept.add(line[1:-2])
                 states.add(line[1:-2])
 
-            # wrong format
+            # wrong file format
             else:
                 raise FormatError("Wrong format!")
 
-    a=Automaton(start,transitions,accept,alphabet,states)
-    return a
+    return Automaton(start,transitions,accept,alphabet,states)
 
-# algorithm for intersection
-def intersection(a1,a2,nfa):
-    W=list(itertools.product(a1.start,a2.start, {1}))   
-    start=set(copy(W))
-    Q=set()   
-    F=set()   
+def intersection(a1,a2):
+    """Algorithm for intersection of 2 Buchi automata."""
+
+    W=list(itertools.product(a1.start,a2.start,{1}))    # all reachable states
+    start=set(copy(W))                                  # start states
+    Q=set()                                             # visited states  
+    F=set()                                             # states [q1,q2,1] where q1 is accepting
     transitions=list()   
 
+    # the construction for nfas can be applied if all the states of one of the two nbas are accepting
+    nfa=all(q in a1.accept for q in a1.states) or all(q in a2.accept for q in a2.states)
+    
+    # algorithm for intersection of 2 Buchi automata
     for q in W:
         Q.add(q)
         if q[0] in a1.accept and q[2]==1:
@@ -66,7 +74,8 @@ def intersection(a1,a2,nfa):
                     for t2 in a2.transitions:
                         if t2[0]==a and t2[1]==q[1]:
                             if q[2]==1 and q[0] not in a1.accept:
-                                transitions.append([q,a,[t1[2],t2[2],1]])
+                                if [q,a,[t1[2],t2[2],1]] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],1]])
                                 if (t1[2],t2[2],1) not in Q:
                                     W.append((t1[2],t2[2],1))
                             if q[2]==1 and q[0] in a1.accept:
@@ -74,15 +83,18 @@ def intersection(a1,a2,nfa):
                                     x=1
                                 else:
                                     x=2
-                                transitions.append([q,a,[t1[2],t2[2],x]])
+                                if [q,a,[t1[2],t2[2],x]] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],x]])
                                 if (t1[2],t2[2],x) not in Q:
                                     W.append((t1[2],t2[2],x))
                             if q[2]==2 and q[1] not in a2.accept:
-                                transitions.append([q,a,[t1[2],t2[2],2]])
+                                if [q,a,[t1[2],t2[2],2]] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],2]])
                                 if (t1[2],t2[2],2) not in Q:
                                     W.append((t1[2], t2[2],2))
                             if q[2]==2 and q[1] in a2.accept:
-                                transitions.append([q,a,[t1[2],t2[2],1]])
+                                if [q,a,[t1[2],t2[2],1]] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],1]])
                                 if (t1[2],t2[2],1) not in Q:
                                     W.append((t1[2],t2[2],1))
     accept=set()
@@ -97,11 +109,13 @@ def intersection(a1,a2,nfa):
     a=Automaton(start,transitions,accept,a1.alphabet|a2.alphabet,W)
     return a
 
-def remove_unreachable_states(a):
+def remove_states_with_no_arrows_out(a):
+    """Removes states from which it can"t be reached to any other state (including the state itself)."""
+
     end=False
     while not end:
+        end=True
         for s in a.states:
-            end=True
             if all(s!=t[0] for t in a.transitions):
                 end=False
                 for i in a.transitions:
@@ -109,6 +123,7 @@ def remove_unreachable_states(a):
                         a.transitions.remove(i)
                 a.states.remove(s)
     return a
+
 
 def find_and_change_cycles(a):
     accept2=set()
@@ -189,19 +204,9 @@ with open(input("Enter a file with the first automaton: ")) as f1:
 with open(input("Enter a file with the second automaton: ")) as f2:
     a2=load_data(f2)
 
-
-# 1st optimization: the construction for nfas can be used for nbas when all the states of one of the two nbas are accepting
-nfa=all(q in a1.accept for q in a1.states) or all(q in a2.accept for q in a2.states)
 # construction
-a=intersection(a1,a2,nfa)
-
-# remove duplicate transitions
-for t in a.transitions:
-    if a.transitions.count(t)>1:
-        a.transitions.remove(t)
-
-# 2nd optimization: remove states from which it can't be reached to any other state (including the state itself)
-a=remove_unreachable_states(a)
+a=intersection(a1,a2)
+a=remove_states_with_no_arrows_out(a)
 
 # 3rd optimization: looking for cycles
 a=find_and_change_cycles(a)
@@ -219,18 +224,9 @@ a.accept=copy(accept2)
 # writing to file
 with open("intersection.ba", "w") as f:
     for i in a.start:
-        if nfa:
-            f.write("[{},{}]\n".format(i[0],i[1]))
-        else:
-            f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
+        f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
     for i in a.transitions:
-        if nfa:
-            f.write("{},[{},{}]->[{},{}]\n".format(i[1],i[0][0],i[0][1],i[2][0],i[2][1]))
-        else:
-            f.write("{},[{},{},{}]->[{},{},{}]\n".format(i[1],i[0][0],i[0][1],i[0][2],i[2][0],i[2][1],i[2][2]))
+        f.write("{},[{},{},{}]->[{},{},{}]\n".format(i[1],i[0][0],i[0][1],i[0][2],i[2][0],i[2][1],i[2][2]))
     for i in a.accept:
-        if nfa:
-            f.write("[{},{}]\n".format(i[0],i[1]))
-        else:
-            f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
+        f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
 
