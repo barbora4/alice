@@ -1,4 +1,4 @@
-"""Class Automaton and loading data from .ba file."""
+"""Class Automaton, loading from .ba files and writing to them."""
 
 import re
 from dataclasses import dataclass
@@ -50,3 +50,14 @@ def load_data(file):
                 raise FormatError("Wrong format!")
 
     return Automaton(states,alphabet,transitions,start,accept)
+
+
+def write_to_file(a,f):
+    with open(f, "w") as f:
+        for i in a.start:
+            f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
+        for i in a.transitions:
+            f.write("{},[{},{},{}]->[{},{},{}]\n".format(i[1],i[0][0],i[0][1],i[0][2],i[2][0],i[2][1],i[2][2]))
+        for i in a.accept:
+            f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
+

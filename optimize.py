@@ -3,22 +3,6 @@
 from automaton import *
 from intersection import *
 
-def remove_states_with_no_arrows_out(a):
-    """Removes states from which it can"t be reached to any other state (including the state itself)."""
-
-    end=False
-    while not end:
-        end=True
-        for s in a.states:
-            if all(s!=t[0] for t in a.transitions):
-                end=False
-                for i in a.transitions:
-                    if tuple(i[2])==s:
-                        a.transitions.remove(i)
-                a.states.remove(s)
-    return a
-
-
 def tarjan(a):
     """Tarjan's algorithm."""
     
@@ -75,26 +59,33 @@ def remove_useless_scc(a):
     """Removes useless strongly connected components - components from which we can't reach to any other scc and no state in scc is accepting or components containing only one accepting state with no transition from it."""
 
     components=tarjan(a)
-    #remove=True
-    for c in components:
-        remove=True
-        if (not any(state in a.accept for state in c)) or (len(c)==1 and all(state in a.accept for state in c)):
-            for state in c:
-                if any((t[0]==state and tuple(t[2]) not in c) for t in a.transitions):
-                    remove=False
-                if len(c)==1 and state in a.accept and any((t[0]==state and tuple(t[2])==state) for t in a.transitions):
-                    remove=False
-            if remove:
+    change=True
+    while change:
+        change=False
+        for c in components:
+            remove=True
+            # Components from which it can't be reached to any other scc and where no state is accepting or 
+            # it contains only one state which is accepting
+            if (not any(state in a.accept for state in c)) or (len(c)==1 and all(state in a.accept for state in c)):
                 for state in c:
-                    a.states.remove(state)
-                    if state in a.start:
-                        a.start.remove(state)
-                    if state in a.accept:
-                        a.accept.remove(state)
-                    transitions=copy(a.transitions)
-                    for t in transitions:
-                        if t[0]==state or tuple(t[2])==state:
-                            a.transitions.remove(t)
+                    if any((t[0]==state and tuple(t[2]) not in c) for t in a.transitions):
+                        remove=False
+                    if len(c)==1 and state in a.accept and any((t[0]==state and tuple(t[2])==state) for t in a.transitions):
+                        remove=False
+                # Remove whole component
+                if remove:
+                    change=True
+                    for state in c:
+                        a.states.remove(state)
+                        if state in a.start:
+                            a.start.remove(state)
+                        if state in a.accept:
+                            a.accept.remove(state)
+                        transitions=copy(a.transitions)
+                        for t in transitions:
+                            if t[0]==state or tuple(t[2])==state:
+                                a.transitions.remove(t)
+                    components.remove(c)
 
 def find_and_change_cycles(a):
     accept2=set()
