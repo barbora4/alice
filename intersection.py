@@ -2,7 +2,6 @@ import re
 import itertools
 from copy import copy
 from dataclasses import dataclass
-from collections import defaultdict #tarjan
 
 @dataclass
 class Automaton:
@@ -59,7 +58,7 @@ def intersection(a1,a2):
     start=set(copy(W))                                  # start states
     Q=set()                                             # visited states  
     F=set()                                             # states [q1,q2,1] where q1 is accepting
-    transitions=list()   
+    transitions=list()                                  # [state,input,next_state]   
 
     # the construction for nfas can be applied if all the states of one of the two nbas are accepting
     nfa=all(q in a1.accept for q in a1.states) or all(q in a2.accept for q in a2.states)
@@ -125,54 +124,58 @@ def remove_states_with_no_arrows_out(a):
                 a.states.remove(s)
     return a
 
-def SCCUtil(a,u,low,disc,stackMember,st,time):
-    """Recursive function that find strongly connected components using DFS traversal.
 
-    u --> the state to be visited next
-    disc[] --> stores discovery times of visited states
-    low[] -- >> earliest visited vertex (the vertex with minimum discovery time) that can be reached from subtree rooted with current vertex
-    st -- >> to store all the connected ancestors (could be part of SCC)
-    stackMember[] --> bit/index array for faster check whether a node is in stack
-    """
+def tarjan(a):
+    """Tarjan's algorithm."""
     
-    # Initialize discovery time and low value
-    disc[u]=time
-    low[u]=time
-    stackMember[u]=True
-    st.append(u)
+    index=0
+    stack=[]    # empty stack
+    visited={i : [-1,-1,False] for i in a.states} # state : [index,lowlink,onStack]
 
-    # Go through all states adjacent to this
-    for v in a.states:
-        # If v is not visited yet, then recur for it
-        if disc[v]==-1:
-            SCCUtil(a,v,low,disc,stackMember,st,time)
-            # Check if the subtree rooted with v has a connection to on of the ancestors of u
-            low[u]=min(low[u],low[w])
-        elif stackMember[v]==True:
-            low[u]=min(low[u],disc[v])
-        # Head node found, pop the stack and print an SCC
-        w=-1    # To store stack extracted states
-        if low[u]==disc[u]:
-            while w!=u:
-                w=st.pop()
-                print(w)
-                stackMember[w]=False
+    def scc(v):
+        """Inner functions to find strongly connected components"""
 
-def SCC(a):
-    """Function to do DFS traversal"""
+        nonlocal index
 
-    # Mark all states as not visited
-    disc=[-1]*len(a.states)
-    low=[-1]*len(a.states)
-    stackMember=[False]*len(a.states)
-    st=[]
+        # Set the depth index for v to the smallest unused index
+        visited[v][0]=index
+        visited[v][1]=index
+        index+=1
+        stack.append(v)
+        visited[v][2]=True
 
-    # Call the recursive helper function to find articulation points in DFS tree rooted with vertex i
-    time=0
-    for i in range(len(a.states)):
-        if disc[i]==-1:
-            SCCUtil(a,i,low,disc,stackMember,st,time)
-            time+=1
+        # Consider successors of v
+        for w in a.states:
+            if any(tuple(t[2])==w and t[0]==v for t in a.transitions):
+                if visited[w][0]==-1:
+                    # Successor w has not yet been visited -> recurse
+                    scc(w)
+                    visited[v][1]=min(visited[v][1],visited[w][1])
+                elif visited[w][2]:
+                    # Successor w is on stack and hence in the current SCC
+                    # If w is not on stack, then (v,w) is a transition pointing to an SCC already found and must be ignored
+                    visited[v][1]=min(visited[v][1],visited[w][0])
+        
+        # If v is a root state, pop the stack and generate a SCC
+        if visited[v][1]==visited[v][0]:
+            # Start a new strongly connected component
+            component=set()
+            w=stack.pop()
+            while w!=v:
+                visited[w][2]=False
+                # Add w to current scc
+                component.add(w)
+                w=stack.pop()
+            visited[w][2]=False
+            component.add(w)
+            # Output the current scc
+            if len(component)!=0:
+                print(component)
+
+    for v in visited:
+        if visited[v][0] == -1:
+            scc(v)
+
 
 def find_and_change_cycles(a):
     accept2=set()
@@ -233,6 +236,7 @@ def remove_unreachable_parts(a):
     reachable=list()
     for st in a.start:
         reachable.append(st)
+    
     quit=False
     while not quit:
         quit=True
@@ -240,11 +244,17 @@ def remove_unreachable_parts(a):
             if t3[0] in reachable and tuple(t3[2]) not in reachable:
                 reachable.append(tuple(t3[2]))
                 quit=False
+    
     transitions2=copy(a.transitions)
     for t in a.transitions:
         if t[0] not in reachable or tuple(t[2]) not in reachable:
             transitions2.remove(t)
     a.transitions=copy(transitions2)
+    
+    states=copy(a.states)
+    for s in states:
+        if s not in reachable:
+            a.states.remove(s)
     return a
 
 
@@ -257,7 +267,7 @@ with open(input("Enter a file with the second automaton: ")) as f2:
 a=intersection(a1,a2)
 a=remove_states_with_no_arrows_out(a)
 
-SCC(a)
+#tarjan(a)
 
 # 3rd optimization: looking for cycles
 a=find_and_change_cycles(a)
@@ -271,6 +281,8 @@ for i in a.accept:
     if not any(t[0]==i or tuple(t[2])==i for t in a.transitions):
         accept2.remove(i)
 a.accept=copy(accept2)
+
+tarjan(a)
 
 # writing to file
 with open("intersection.ba", "w") as f:
