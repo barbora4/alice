@@ -25,6 +25,7 @@ def tarjan(a):
     index=0
     stack=[]    # empty stack
     visited={i : [-1,-1,False] for i in a.states} # state : [index,lowlink,onStack]
+    all_components=list()
 
     def scc(v):
         """Inner functions to find strongly connected components"""
@@ -62,14 +63,38 @@ def tarjan(a):
                 w=stack.pop()
             visited[w][2]=False
             component.add(w)
-            # Output the current scc
-            if len(component)!=0:
-                print(component)
+            all_components.append(component)
 
     for v in visited:
         if visited[v][0] == -1:
             scc(v)
 
+    return all_components
+
+def remove_useless_scc(a):
+    """Removes useless strongly connected components - components from which we can't reach to any other scc and no state in scc is accepting or components containing only one accepting state with no transition from it."""
+
+    components=tarjan(a)
+    #remove=True
+    for c in components:
+        remove=True
+        if (not any(state in a.accept for state in c)) or (len(c)==1 and all(state in a.accept for state in c)):
+            for state in c:
+                if any((t[0]==state and tuple(t[2]) not in c) for t in a.transitions):
+                    remove=False
+                if len(c)==1 and state in a.accept and any((t[0]==state and tuple(t[2])==state) for t in a.transitions):
+                    remove=False
+            if remove:
+                for state in c:
+                    a.states.remove(state)
+                    if state in a.start:
+                        a.start.remove(state)
+                    if state in a.accept:
+                        a.accept.remove(state)
+                    transitions=copy(a.transitions)
+                    for t in transitions:
+                        if t[0]==state or tuple(t[2])==state:
+                            a.transitions.remove(t)
 
 def find_and_change_cycles(a):
     accept2=set()

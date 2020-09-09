@@ -17,7 +17,8 @@ a=find_and_change_cycles(a)
 # remove unreachable parts
 a=remove_unreachable_parts(a)
 
-tarjan(a)
+#tarjan(a)
+remove_useless_scc(a)
 
 # writing to file
 with open("intersection.ba", "w") as f:
