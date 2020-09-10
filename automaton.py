@@ -1,6 +1,7 @@
 """Class Automaton, loading from .ba files and writing to them."""
 
 import re
+import csv
 from dataclasses import dataclass
 
 @dataclass
@@ -35,7 +36,7 @@ def load_data(file):
             # transitions
             if match:
                 beginning=False
-                transitions.add((match.group(1), match.group(3), match.group(5)))
+                transitions.add((match.group(3), match.group(1), match.group(5)))
                 alphabet.add(match.group(1))
                 states.add(match.group(3))
                 states.add(match.group(5))
@@ -55,9 +56,12 @@ def load_data(file):
 def write_to_file(a,f):
     with open(f, "w") as f:
         for i in a.start:
-            f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
+            print('[%s]'%','.join(map(str, i)), file=f)
         for i in a.transitions:
-            f.write("{},[{},{},{}]->[{},{},{}]\n".format(i[1],i[0][0],i[0][1],i[0][2],i[2][0],i[2][1],i[2][2]))
+            t1='[%s]'%','.join(map(str, i[0]))
+            t2='[%s]'%','.join(map(str, i[2]))
+            inp='%s'%','.join(map(str, i[1]))
+            print("{},{}->{}".format(inp,t1,t2), file=f)
         for i in a.accept:
-            f.write("[{},{},{}]\n".format(i[0],i[1],i[2]))
+            print('[%s]'%','.join(map(str, i)), file=f)
 

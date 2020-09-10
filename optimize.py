@@ -1,6 +1,6 @@
 """Optimizations for Buchi automata."""
 
-from automaton import *
+from automaton import Automaton
 from intersection import *
 
 def tarjan(a):
