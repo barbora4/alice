@@ -55,6 +55,9 @@ def intersection(a1,a2):
                                 if (t1[2],t2[2],1) not in Q:
                                     W.append((t1[2],t2[2],1))
     
+    for t in transitions:
+        t[2]=tuple(t[2])
+
     # creating set of accepting states
     accept=set()
     for s in W:
