@@ -56,12 +56,23 @@ def load_data(file):
 def write_to_file(a,f):
     with open(f, "w") as f:
         for i in a.start:
-            print('[%s]'%','.join(map(str, i)), file=f)
+            if type(i)==tuple:
+                f.write('[{}]\n'.format(','.join(map(str,i))))
+            else:
+                f.write('[{}]\n'.format(i))
         for i in a.transitions:
-            t1='[%s]'%','.join(map(str, i[0]))
-            t2='[%s]'%','.join(map(str, i[2]))
-            inp='%s'%','.join(map(str, i[1]))
-            print("{},{}->{}".format(inp,t1,t2), file=f)
+            if type(i[0])==tuple:
+                t1='[%s]'%','.join(map(str, i[0]))
+            else:
+                t1="[{}]".format(i[0])
+            if type(i[2])==tuple:
+                t2='[%s]'%','.join(map(str, i[2]))
+            else:
+                t2="[{}]".format(i[2])
+            f.write("{},{}->{}\n".format(i[1],t1,t2))
         for i in a.accept:
-            print('[%s]'%','.join(map(str, i)), file=f)
-
+            if type(i)==tuple:
+                f.write('[{}]\n'.format(','.join(map(str,i))))
+            else:
+                f.write('[{}]\n'.format(i))
+ 

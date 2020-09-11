@@ -39,4 +39,8 @@ def union(a1,a2):
         if s not in states:
             accept.remove(s)
 
+    transitions=list(transitions)
+    for i in range(len(transitions)):
+        transitions[i]=list(transitions[i])
+
     return Automaton(states,alphabet,transitions,start,accept)

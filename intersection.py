@@ -29,7 +29,7 @@ def intersection(a1,a2):
                             # if state of the 1st automaton in the 1st copy is not accepting, we stay in the 1st copy
                             if q[2]==1 and q[0] not in a1.accept:
                                 if [q,a,[t1[2],t2[2],1]] not in transitions:
-                                    transitions.append([q,a,[t1[2],t2[2],1]])
+                                    transitions.append([q,a,[t1[2],t2[2],1]]) 
                                 if (t1[2],t2[2],1) not in Q:
                                     W.append((t1[2],t2[2],1))
                             # if state of the 1st automaton in the 1st copy is accepting, we move to the 2nd copy
@@ -67,6 +67,6 @@ def intersection(a1,a2):
         else:
             if s[0] in a1.accept and s[2]==1:
                 accept.add(s)
-    
+
     return Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
 
