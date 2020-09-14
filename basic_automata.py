@@ -1,5 +1,7 @@
 """Construction of basic Buchi automata."""
 
+from copy import copy
+from itertools import product
 from automaton import Automaton
 
 def zero_in_X(X):
@@ -26,7 +28,10 @@ def x_in_Y(x,Y):
 
     alphabet_x={"{}:0".format(x), "{}:1".format(x)}
     alphabet_Y={"{}:0".format(Y), "{}:1".format(Y)}
-    alphabet=alphabet_x|alphabet_Y
+    alphabet=set()
+    for a in alphabet_x:
+        for b in alphabet_Y:
+            alphabet.add("{}|{}".format(a,b))
 
     transitions=list()
     for s in start:
@@ -67,7 +72,10 @@ def x_is_y(x,y):
    
     alphabet_x={"{}:0".format(x), "{}:1".format(x)}
     alphabet_y={"{}:0".format(y), "{}:1".format(y)}
-    alphabet=alphabet_x|alphabet_y
+    alphabet=set()
+    for a in alphabet_x:
+        for b in alphabet_y:
+            alphabet.add("{}|{}".format(a,b))
 
     transitions=list()
     for s in start:
@@ -93,20 +101,56 @@ def get_all_variables(a):
 def add_to_transitions(a1,alphabet1,alphabet2):
     """Adds variables to transitions of a1."""
 
+    old_alphabet=copy(a1.alphabet)
+    change=False
     for a in alphabet2:
         if a not in alphabet1:
+            change=True
             # add to alphabet
             alphabet1.add(a)
-            a1.alphabet.add("{}:0".format(a))
-            a1.alphabet.add("{}:1".format(a))
+            for b in copy(a1.alphabet):
+                a1.alphabet.add("{}|{}:0".format(b,a))
+                a1.alphabet.add("{}|{}:1".format(b,a))
             # add to all transitions
             for i in range(len(a1.transitions)):
-                a1.transitions[i]=list(a1.transitions[i])
                 a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
-                a1.transitions[i]=tuple(a1.transitions[i])
+
+    if change:
+        for a in old_alphabet:
+            a1.alphabet.remove(a)
+
+def alphabetical_order(a):
+    """Sorts input variables in transitions alphabetically."""
+
+    for i in range(len(a.transitions)):
+        t=list(a.transitions[i][1].split('|'))
+        t.sort()
+        first=True
+        for j in t:
+            if first:
+                a.transitions[i][1]=j
+                first=False
+            else:
+                a.transitions[i][1]="{}|{}".format(a.transitions[i][1], j)
+        a.transitions[i]=tuple(a.transitions[i])
+
+    new_alphabet=set()
+    for i in a.alphabet:
+        t=list(i.split('|'))
+        t.sort()
+        first=True
+        for j in t:
+            if first:
+                i=j
+                first=False
+            else:
+                i="{}|{}".format(i,j)
+        new_alphabet.add(i)
+    a.alphabet=copy(new_alphabet)
+
 
 def add_all_variables(a1,a2):
-    """Adds variables that are only in one automaton to the second one."""
+    """Adds variables that are only in one automaton to the second one and sorts input variables alphabetically."""
 
     alphabet1=get_all_variables(a1)
     alphabet2=get_all_variables(a2)
@@ -114,3 +158,5 @@ def add_all_variables(a1,a2):
     add_to_transitions(a1,alphabet1,alphabet2)
     add_to_transitions(a2,alphabet2,alphabet1)
 
+    alphabetical_order(a1)
+    alphabetical_order(a2)

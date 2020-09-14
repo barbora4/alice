@@ -7,30 +7,58 @@ from automaton import Automaton
 def union(a1,a2):
     """Algorithm for union of two Buchi automata."""
     
-    start = '0'     # new start state
-    states = a1.states|a2.states
-    states.add(start)
+    start = {"0"}         # new start state
+    
+    # unique name for every state
+    states = set()
+    for s in a1.states:
+        states.add((s,'1'))
+    for s in a2.states:
+        states.add((s,'2'))
+    for s in start:
+        states.add(s)
+    
     alphabet = a1.alphabet|a2.alphabet
-    transitions = copy(set(a1.transitions)|set(a2.transitions))
-    accept = a1.accept|a2.accept
+    
+    transitions=set()
+    for t in a1.transitions:
+        transitions.add(((t[0],'1'),t[1],(t[2],'1')))
+    for t in a2.transitions:
+        transitions.add(((t[0],'2'),t[1],(t[2],'2')))
+
+    accept = set()
+    for s in a1.accept:
+        accept.add((s,'1'))
+    for s in a2.accept:
+        accept.add((s,'2'))
 
     # add transitions from new start state
-    for t in set(a1.transitions)|set(a2.transitions):
-        if t[0] in a1.start|a2.start:
-            transitions.add((start,t[1],t[2]))
+    old_transitions=copy(transitions)
+    old_start=set()
+    for s in a1.start:
+        old_start.add((s,'1'))
+    for s in a2.start:
+        old_start.add((s,'2'))
+    
+    for t in old_transitions:
+        if t[0] in old_start:
+            for s in start:
+                transitions.add((s,t[1],t[2]))
             
-            if not any(i[0]==t[0] and i[0]==i[2] for i in set(a1.transitions)|set(a2.transitions)):
+            if not any(i[0]==t[0] and i[0]==i[2] for i in old_transitions):
                 transitions.remove(t)
             elif t[0]==t[2]:
                 # old start state with self loop won't be removed
-                transitions.add((start,t[1],t[2]))
+                for s in start:
+                    transitions.add((s,t[1],t[2]))
 
             # if one of the old start states was accepting, the new one will be as well
             if t[0] in accept:
-                accept.add(start)
+                for s in start:
+                    accept.add(s)
 
     # remove old start states
-    for s in a1.start|a2.start:
+    for s in copy(start):
         if not any(t[0] in states or t[2] in states for t in transitions):
             states.remove(s)
 
