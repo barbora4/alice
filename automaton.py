@@ -10,7 +10,7 @@ class Automaton:
 
     states: set
     alphabet: set
-    transitions: set
+    transitions: list
     start: set
     accept: set
 
@@ -18,7 +18,7 @@ def load_data(file):
     """Loads data from .ba file to object Automaton"""
 
     start=set()         # start states
-    transitions=set()   # transitions: [input, start, end]
+    transitions=set()  # transitions: [input, start, end]  
     accept=set()        # accept states
     alphabet=set()      # set of all input symbols
     states=set()        # set of all states
@@ -36,7 +36,7 @@ def load_data(file):
             # transitions
             if match:
                 beginning=False
-                transitions.add((match.group(3), match.group(1), match.group(5)))
+                transitions.add((match.group(3), match.group(1), match.group(5))) 
                 alphabet.add(match.group(1))
                 states.add(match.group(3))
                 states.add(match.group(5))
@@ -50,7 +50,7 @@ def load_data(file):
             else:
                 raise FormatError("Wrong format!")
 
-    return Automaton(states,alphabet,transitions,start,accept)
+    return Automaton(states,alphabet,list(transitions),start,accept)
 
 
 def write_to_file(a,f):

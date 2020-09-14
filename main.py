@@ -20,5 +20,18 @@ a=union(a1,a2)
 write_to_file(a,"union.ba")
 
 # basic automata
-a=zero_in_X('X')
-write_to_file(a,"zero.ba")
+a1=zero_in_X('X')
+write_to_file(a1,"zero.ba")
+
+a2=x_in_Y('x','Y')
+write_to_file(a2,"xinY.ba")
+
+a=x_is_0('x')
+write_to_file(a,"xis0.ba")
+
+a=x_is_y('x','y')
+write_to_file(a,"xisy.ba")
+
+add_all_variables(a1,a2)
+write_to_file(a1,"1.ba")
+write_to_file(a2,"2.ba")

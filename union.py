@@ -11,15 +11,15 @@ def union(a1,a2):
     states = a1.states|a2.states
     states.add(start)
     alphabet = a1.alphabet|a2.alphabet
-    transitions = copy(a1.transitions|a2.transitions)
+    transitions = copy(set(a1.transitions)|set(a2.transitions))
     accept = a1.accept|a2.accept
 
     # add transitions from new start state
-    for t in a1.transitions|a2.transitions:
+    for t in set(a1.transitions)|set(a2.transitions):
         if t[0] in a1.start|a2.start:
             transitions.add((start,t[1],t[2]))
             
-            if not any(i[0]==t[0] and i[0]==i[2] for i in a1.transitions|a2.transitions):
+            if not any(i[0]==t[0] and i[0]==i[2] for i in set(a1.transitions)|set(a2.transitions)):
                 transitions.remove(t)
             elif t[0]==t[2]:
                 # old start state with self loop won't be removed
