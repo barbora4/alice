@@ -43,11 +43,9 @@ def intersection(a1,a2):
             F.add(q)
         for a in a1.alphabet|a2.alphabet:
             for t1 in a1.transitions:
-                #if t1[1]==a and t1[0]==q[0]:
-                if input_equal(a,t1[1]) and t1[0]==q[0]: ###
+                if input_equal(a,t1[1]) and t1[0]==q[0]: 
                     for t2 in a2.transitions:
-                        #if t2[1]==a and t2[0]==q[1]:
-                        if input_equal(a,t2[1]) and t2[0]==q[1]: ###
+                        if input_equal(a,t2[1]) and t2[0]==q[1]: 
                             # if state of the 1st automaton in the 1st copy is not accepting, we stay in the 1st copy
                             if q[2]==1 and q[0] not in a1.accept:
                                 if [q,a,[t1[2],t2[2],1]] not in transitions:

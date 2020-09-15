@@ -190,17 +190,23 @@ def remove_unreachable_parts(a):
     # Remove unreachable accept states
     accept2=copy(a.accept)
     for i in a.accept:
-        if not any(t[0]==i or t[2]==i for t in a.transitions):
+        if (not any(t[0]==i or t[2]==i for t in a.transitions)):
             accept2.remove(i)
     a.accept=copy(accept2)
-    
+   
+    if len(a.transitions)==0:
+        a.start=set()
+        a.accept=set()
+        a.states=set()
+        a.alphabet=set()
+
     return a
 
 
 def optimize(a):
     """Reduces double cycles and removes useless strongly connected components."""
 
-    a=find_and_change_cycles(a)
+    #a=find_and_change_cycles(a)
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
 

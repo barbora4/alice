@@ -3,6 +3,7 @@
 from copy import copy
 from itertools import product
 from automaton import Automaton
+from optimize import *
 
 def zero_in_X(X):
     """Constructs Buchi automaton for formula: 0 is an element of X."""
@@ -132,7 +133,6 @@ def alphabetical_order(a):
                 first=False
             else:
                 a.transitions[i][1]="{}|{}".format(a.transitions[i][1], j)
-        a.transitions[i]=tuple(a.transitions[i])
 
     new_alphabet=set()
     for i in a.alphabet:
@@ -160,3 +160,76 @@ def add_all_variables(a1,a2):
 
     alphabetical_order(a1)
     alphabetical_order(a2)
+
+
+def exist_X(a,X):
+    """Projection: eliminates X from the input alphabet and transitions of automaton a."""
+
+    # remove X from the input alphabet
+    alphabet=list(copy(a.alphabet))
+    for i in range(len(alphabet)):
+        t=list(alphabet[i].split('|'))
+        for j in t:
+            if X in j:
+                t.remove(j)
+        first=True
+        for j in t:
+            if first:
+                alphabet[i]=j
+                first=False
+            else:
+                alphabet[i]="{}|{}".format(alphabet[i],j)
+    alphabet=set(alphabet)
+
+    # remove X from all transitions
+    transitions=copy(a.transitions)
+    for i in transitions:
+        t=list(i[1].split('|'))
+        for j in t:
+            if X in j:
+                t.remove(j)
+        first=True
+        for j in t:
+            if first:
+                i[1]=j
+                first=False
+            else:
+                i[1]="{}|{}".format(i[1],j)
+        if first:
+            i[1]=""
+
+    # remove empty transitions
+    for t in copy(transitions):
+        if len(t[1])==0:
+            transitions.remove(t)
+
+    # remove duplicate transitions
+    for t in transitions:
+        if transitions.count(t)>1:
+            transitions.remove(t)
+
+    b=Automaton(a.states,alphabet,transitions,a.start,a.accept)
+    remove_unreachable_parts(b)
+    return b
+
+
+def A_x(x):
+    """Automaton to intersect with to make sure x appears exactly once."""
+
+    a=x_is_0(x)
+    for s in a.start:
+        for acc in a.accept:
+            a.transitions.append([s,"{}:0".format(x),s])
+
+    return a
+
+
+def exist_x(a,x):
+    """Projection: eliminates x from the input alphabet and transitions of automaton a.
+
+    Same as exist_X, but first is intersected with automaton that ensures that x appears only once (first-order variable)."""
+
+    b=A_x(x)
+    add_all_variables(a,b)
+    a=intersection(a,b)
+    return exist_X(a,x)

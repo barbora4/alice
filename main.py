@@ -11,13 +11,14 @@ with open(input("Enter a file with the second automaton: ")) as f2:
     a2=load_data(f2)
 
 # intersection
-#a=intersection(a1,a2)
-#optimize(a)
-#write_to_file(a,"intersection.ba")
+a=intersection(a1,a2)
+find_and_change_cycles(a)
+optimize(a)
+write_to_file(a,"intersection.ba")
 
 # union
-#a=union(a1,a2)
-#write_to_file(a,"union.ba")
+a=union(a1,a2)
+write_to_file(a,"union.ba")
 
 # basic automata
 a=zero_in_X('X')
@@ -37,4 +38,12 @@ a=union(a1,a2)
 write_to_file(a,"1.ba")
 a=intersection(a1,a2)
 optimize(a)
+write_to_file(a,"2.ba")
+
+a=zero_in_X('X')
+a=exist_X(a,'X')
+write_to_file(a,"1.ba")
+
+a=x_is_y('x','y')
+a=exist_x(a,'y')
 write_to_file(a,"2.ba")
