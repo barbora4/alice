@@ -15,10 +15,10 @@ class Automaton:
     accept: set
 
 def load_data(file):
-    """Loads data from .ba file to object Automaton"""
+    """Loads data from .ba file to object Automaton."""
 
     start=set()         # start states
-    transitions=set()  # transitions: [input, start, end]  
+    transitions=list()  # transitions: [input, start, end]  
     accept=set()        # accept states
     alphabet=set()      # set of all input symbols
     states=set()        # set of all states
@@ -36,7 +36,7 @@ def load_data(file):
             # transitions
             if match:
                 beginning=False
-                transitions.add((match.group(3), match.group(1), match.group(5))) 
+                transitions.append([match.group(3), match.group(1), match.group(5)]) 
                 alphabet.add(match.group(1))
                 states.add(match.group(3))
                 states.add(match.group(5))
@@ -48,9 +48,9 @@ def load_data(file):
 
             # wrong file format
             else:
-                raise FormatError("Wrong format!")
+                raise SyntaxError("Wrong format!")
 
-    return Automaton(states,alphabet,list(transitions),start,accept)
+    return Automaton(states,alphabet,transitions,start,accept)
 
 
 def write_to_file(a,f):
@@ -90,13 +90,28 @@ def write_to_gv(a,f):
         for acc in a.accept:
             # name of the state without ' ' and ','
             if type(acc)==tuple:
-                f.write(" {}".format(''.join(map(str,acc))))    
+                f.write(' {}'.format(''.join(map(str,acc))))    
             else:
                 f.write(" {}".format(acc))
-        f.write(";\n")
+        if len(a.accept)!=0:
+            f.write(";\n")
+        else:
+            f.write("\n")
+        if len(a.states)!=0:
+            f.write('\tinit [label="", shape=point]\n')
         f.write("\tnode [shape = circle];\n")
-        
+
+        # states
+        for s in a.states:
+            f.write('\t{} [label="{}"];\n'.format(''.join(map(str,s)), ','.join(map(str,s))))
+
         # transitions
+        for s in a.start:
+            if type(s)==tuple:
+                t="{}".format(''.join(map(str,s)))
+            else:
+                t=s
+            f.write('\tinit -> {}\n'.format(t))
         for t in a.transitions:
             if type(t[0])==tuple:
                 t0="{}".format(''.join(map(str,t[0])))

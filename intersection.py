@@ -8,6 +8,10 @@ from basic_automata import cylindrification
 def input_equal(a,t):
     """Returns True if inputs a and t are equal."""
 
+    if '|' not in a:
+        if a==t:
+            return True
+
     # divide into variables
     a_list=list()
     a_list=list(a.split('|'))
@@ -31,7 +35,7 @@ def intersection(a1,a2):
     # add all variables to input alphabet and transitions
     cylindrification(a1,a2)
 
-    W=list(itertools.product(a1.start,a2.start,{1}))    # all reachable states
+    W=list(itertools.product(a1.start,a2.start,{'1'}))  # all reachable states
     start=set(copy(W))                                  # start states
     Q=set()                                             # visited states  
     F=set()                                             # states [q1,q2,1] where q1 is accepting
@@ -40,10 +44,20 @@ def intersection(a1,a2):
     # the construction for nfas can be applied if all the states of one of the two nbas are accepting
     nfa=all(q in a1.accept for q in a1.states) or all(q in a2.accept for q in a2.states)
 
+    # edit names of states
+    states=copy(W)
+    for i in range(len(states)):
+        for j in range(len(states[i])):
+            if type(states[i][j])==tuple:
+                states[i]=list(states[i])
+                states[i][j]="{}".format(','.join(map(str,states[i][j])))
+                states[i]=tuple(states[i])
+    W=copy(states)
+
     # algorithm for intersection of 2 Buchi automata
     for q in W:
         Q.add(q)
-        if q[0] in a1.accept and q[2]==1:
+        if q[0] in a1.accept and q[2]=='1':
             F.add(q)
         for a in a1.alphabet|a2.alphabet:
             for t1 in a1.transitions:
@@ -51,33 +65,33 @@ def intersection(a1,a2):
                     for t2 in a2.transitions:
                         if input_equal(a,t2[1]) and t2[0]==q[1]: 
                             # if state of the 1st automaton in the 1st copy is not accepting, we stay in the 1st copy
-                            if q[2]==1 and q[0] not in a1.accept:
-                                if [q,a,[t1[2],t2[2],1]] not in transitions:
-                                    transitions.append([q,a,[t1[2],t2[2],1]]) 
-                                if (t1[2],t2[2],1) not in Q:
-                                    W.append((t1[2],t2[2],1))
+                            if q[2]=='1' and q[0] not in a1.accept:
+                                if [q,a,[t1[2],t2[2],'1']] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],'1']]) 
+                                if (t1[2],t2[2],'1') not in Q:
+                                    W.append((t1[2],t2[2],'1'))
                             # if state of the 1st automaton in the 1st copy is accepting, we move to the 2nd copy
-                            if q[2]==1 and q[0] in a1.accept:
+                            if q[2]=='1' and q[0] in a1.accept:
                                 if nfa:
-                                    x=1
+                                    x='1'
                                 else:
-                                    x=2
+                                    x='2'
                                 if [q,a,[t1[2],t2[2],x]] not in transitions:
                                     transitions.append([q,a,[t1[2],t2[2],x]])
                                 if (t1[2],t2[2],x) not in Q:
                                     W.append((t1[2],t2[2],x))
                             # if state of the 2nd automaton in the 2nd copy is not accepting, we stay in the 2nd copy
-                            if q[2]==2 and q[1] not in a2.accept:
-                                if [q,a,[t1[2],t2[2],2]] not in transitions:
-                                    transitions.append([q,a,[t1[2],t2[2],2]])
-                                if (t1[2],t2[2],2) not in Q:
-                                    W.append((t1[2], t2[2],2))
+                            if q[2]=='2' and q[1] not in a2.accept:
+                                if [q,a,[t1[2],t2[2],'2']] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],'2']])
+                                if (t1[2],t2[2],'2') not in Q:
+                                    W.append((t1[2], t2[2],'2'))
                             # if state of the 2nd automaton in the 2nd copy is accepting, we move to the 1st copy
-                            if q[2]==2 and q[1] in a2.accept:
-                                if [q,a,[t1[2],t2[2],1]] not in transitions:
-                                    transitions.append([q,a,[t1[2],t2[2],1]])
-                                if (t1[2],t2[2],1) not in Q:
-                                    W.append((t1[2],t2[2],1))
+                            if q[2]=='2' and q[1] in a2.accept:
+                                if [q,a,[t1[2],t2[2],'1']] not in transitions:
+                                    transitions.append([q,a,[t1[2],t2[2],'1']])
+                                if (t1[2],t2[2],'1') not in Q:
+                                    W.append((t1[2],t2[2],'1'))
     
     for t in transitions:
         t[2]=tuple(t[2])
@@ -89,7 +103,7 @@ def intersection(a1,a2):
             if s[0] in a1.accept and s[1] in a2.accept:
                 accept.add(s)
         else:
-            if s[0] in a1.accept and s[2]==1:
+            if s[0] in a1.accept and s[2]=='1':
                 accept.add(s)
 
     return Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)

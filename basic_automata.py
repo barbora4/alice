@@ -5,21 +5,6 @@ from itertools import product
 from automaton import Automaton
 from optimize import *
 
-def zero_in_X(X):
-    """Constructs Buchi automaton for formula: 0 is an element of X."""
-
-    start={"0"}
-    accept={"1"}
-    alphabet=["{}:0".format(X), "{}:1".format(X)]
-    # first input must be X:1
-    for s in start:
-        for a in accept:
-            transitions=[[s,alphabet[1],a], [a,alphabet[0],a], [a,alphabet[1],a]]
-    states=start|accept
-
-    return Automaton(states,set(alphabet),transitions,start,accept)
-
-
 def x_in_Y(x,Y):
     """Constructs Buchi automaton for formula: x is in Y."""
 
@@ -162,7 +147,7 @@ def cylindrification(a1,a2):
     alphabetical_order(a2)
 
 
-def exists_X(a,X):
+def exists(a,X):
     """Projection: eliminates X from the input alphabet and transitions of automaton a."""
 
     # remove X from the input alphabet
@@ -231,4 +216,74 @@ def exist_x(a,x):
 
     b=A_x(x)
     a=intersection(a,b)
-    return exists_X(a,x)
+    return exists(a,x)
+
+
+def sub(X,Y):
+    """Constructs atomic automaton for formula: X is a subset of Y."""
+
+    start={"0"}
+    accept=copy(start)
+    states=start|accept
+   
+    alphabet_X={"{}:0".format(X), "{}:1".format(X)}
+    alphabet_Y={"{}:0".format(Y), "{}:1".format(Y)}
+    alphabet=set()
+    for a in alphabet_X:
+        for b in alphabet_Y:
+            alphabet.add("{}|{}".format(a,b))
+
+    transitions=list()
+    for s in start:
+        # if an element is in X, it must be also in Y
+        transitions.append([s,"{}:0|{}:?".format(X,Y),s])
+        transitions.append([s,"{}:1|{}:1".format(X,Y),s])
+
+    return Automaton(states,alphabet,transitions,start,accept)
+
+
+def succ(Y,X):
+    """Constructs atomic automaton for formula: Y is a successor of X."""
+
+    start={"0"}
+    accept=copy(start)|{"1"}
+    states=start|accept
+   
+    alphabet_X={"{}:0".format(X), "{}:1".format(X)}
+    alphabet_Y={"{}:0".format(Y), "{}:1".format(Y)}
+    alphabet=set()
+    for a in alphabet_X:
+        for b in alphabet_Y:
+            alphabet.add("{}|{}".format(a,b))
+
+    transitions=list()
+    for s in start:
+        for a in accept:
+            if a not in start:
+                transitions.append([s,"{}:0|{}:0".format(X,Y),s])
+                transitions.append([s,"{}:1|{}:0".format(X,Y),a])
+                transitions.append([a,"{}:1|{}:1".format(X,Y),a])
+                transitions.append([a,"{}:0|{}:1".format(X,Y),s])
+    
+    return Automaton(states,alphabet,transitions,start,accept)
+
+
+def zeroin(X):
+    """Constructs Buchi automaton for formula: 0 is an element of X."""
+
+    start={"0"}
+    accept={"1"}
+    alphabet=["{}:0".format(X), "{}:1".format(X)]
+    
+    transitions=list()
+    # first input must be X:1
+    for s in start:
+        for a in accept:
+                transitions.append([s,"{}:1".format(X),a])
+                transitions.append([a,"{}:?".format(X),a])
+    
+    states=start|accept
+
+    return Automaton(states,set(alphabet),transitions,start,accept)
+
+
