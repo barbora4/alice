@@ -149,7 +149,7 @@ def alphabetical_order(a):
     a.alphabet=copy(new_alphabet)
 
 
-def add_all_variables(a1,a2):
+def cylindrification(a1,a2):
     """Adds variables that are only in one automaton to the second one and sorts input variables alphabetically."""
 
     alphabet1=get_all_variables(a1)
@@ -162,7 +162,7 @@ def add_all_variables(a1,a2):
     alphabetical_order(a2)
 
 
-def exist_X(a,X):
+def exists_X(a,X):
     """Projection: eliminates X from the input alphabet and transitions of automaton a."""
 
     # remove X from the input alphabet
@@ -230,6 +230,5 @@ def exist_x(a,x):
     Same as exist_X, but first is intersected with automaton that ensures that x appears only once (first-order variable)."""
 
     b=A_x(x)
-    add_all_variables(a,b)
     a=intersection(a,b)
-    return exist_X(a,x)
+    return exists_X(a,x)

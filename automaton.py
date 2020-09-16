@@ -54,6 +54,8 @@ def load_data(file):
 
 
 def write_to_file(a,f):
+    """Writes automaton to .ba file."""
+
     with open(f, "w") as f:
         for i in a.start:
             if type(i)==tuple:
@@ -76,3 +78,35 @@ def write_to_file(a,f):
             else:
                 f.write('[{}]\n'.format(i))
  
+def write_to_gv(a,f):
+    """Writes automaton into .gv file."""
+
+    with open(f, "w") as f:
+        # beginning
+        f.write("digraph finite_state_machine {\n")
+        f.write("\trankdir=LR;\n")
+        f.write('\tsize="8,5"\n')
+        f.write("\tnode [shape = doublecircle];")
+        for acc in a.accept:
+            # name of the state without ' ' and ','
+            if type(acc)==tuple:
+                f.write(" {}".format(''.join(map(str,acc))))    
+            else:
+                f.write(" {}".format(acc))
+        f.write(";\n")
+        f.write("\tnode [shape = circle];\n")
+        
+        # transitions
+        for t in a.transitions:
+            if type(t[0])==tuple:
+                t0="{}".format(''.join(map(str,t[0])))
+            else:
+                t0=t[0]
+            if type(t[2])==tuple:
+                t2="{}".format(''.join(map(str,t[2])))
+            else:
+                t2=t[2]
+            f.write('\t{} -> {} [ label = "{}" ];\n'.format(t0,t2,t[1]))
+
+        # end
+        f.write("}\n")

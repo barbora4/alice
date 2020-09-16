@@ -3,6 +3,7 @@
 import itertools
 from copy import copy
 from automaton import Automaton
+from basic_automata import cylindrification
 
 def input_equal(a,t):
     """Returns True if inputs a and t are equal."""
@@ -26,6 +27,9 @@ def input_equal(a,t):
 
 def intersection(a1,a2):
     """Algorithm for intersection of 2 Buchi automata."""
+
+    # add all variables to input alphabet and transitions
+    cylindrification(a1,a2)
 
     W=list(itertools.product(a1.start,a2.start,{1}))    # all reachable states
     start=set(copy(W))                                  # start states

@@ -3,10 +3,14 @@
 from itertools import product
 from copy import copy 
 from automaton import Automaton
+from basic_automata import cylindrification
 
 def union(a1,a2):
     """Algorithm for union of two Buchi automata."""
     
+    # add all variables to input alphabet and transitions
+    cylindrification(a1,a2)
+
     start = {"0"}         # new start state
     
     # unique name for every state
