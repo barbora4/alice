@@ -88,11 +88,7 @@ def write_to_gv(a,f):
         f.write('\tsize="8,5"\n')
         f.write("\tnode [shape = doublecircle];")
         for acc in a.accept:
-            # name of the state without ' ' and ','
-            if type(acc)==tuple:
-                f.write(' {}'.format(''.join(map(str,acc))))    
-            else:
-                f.write(" {}".format(acc))
+            f.write(' {}'.format(''.join(map(str,acc)).replace(',','')))
         if len(a.accept)!=0:
             f.write(";\n")
         else:
@@ -103,24 +99,14 @@ def write_to_gv(a,f):
 
         # states
         for s in a.states:
-            f.write('\t{} [label="{}"];\n'.format(''.join(map(str,s)), ','.join(map(str,s))))
+            f.write('\t{} [label="{}"];\n'.format(''.join(map(str,s)).replace(',',''), ','.join(map(str,s))))
 
         # transitions
         for s in a.start:
-            if type(s)==tuple:
-                t="{}".format(''.join(map(str,s)))
-            else:
-                t=s
-            f.write('\tinit -> {}\n'.format(t))
+            f.write('\tinit -> {}\n'.format(''.join(map(str,s)).replace(',','')))
         for t in a.transitions:
-            if type(t[0])==tuple:
-                t0="{}".format(''.join(map(str,t[0])))
-            else:
-                t0=t[0]
-            if type(t[2])==tuple:
-                t2="{}".format(''.join(map(str,t[2])))
-            else:
-                t2=t[2]
+            t0="{}".format(''.join(map(str,t[0])).replace(',',''))
+            t2="{}".format(''.join(map(str,t[2])).replace(',',''))
             f.write('\t{} -> {} [ label = "{}" ];\n'.format(t0,t2,t[1]))
 
         # end
