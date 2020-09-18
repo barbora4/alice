@@ -2,8 +2,9 @@
 
 from itertools import product
 from copy import copy 
-from automaton import Automaton
+from automaton import *
 from basic_automata import cylindrification
+from optimize import optimize
 
 def union(a1,a2):
     """Algorithm for union of two Buchi automata."""
@@ -11,7 +12,7 @@ def union(a1,a2):
     # add all variables to input alphabet and transitions
     cylindrification(a1,a2)
 
-    start = {"0"}         # new start state
+    start = {"S"}         # new start state
     
     # unique name for every state
     states = set()
@@ -75,4 +76,13 @@ def union(a1,a2):
     for i in range(len(transitions)):
         transitions[i]=list(transitions[i])
 
-    return Automaton(states,alphabet,transitions,start,accept)
+    # edit names and transitions
+    #states=edit_names(states)
+    #start=edit_names(start)
+    #accept=edit_names(accept)
+    #transitions=edit_transitions(transitions)
+
+    a=Automaton(states,alphabet,transitions,start,accept)
+    edit_names(a)  # edit names of states and transitions
+    optimize(a)
+    return a

@@ -206,7 +206,6 @@ def remove_unreachable_parts(a):
 def optimize(a):
     """Reduces double cycles and removes useless strongly connected components."""
 
-    #a=find_and_change_cycles(a)
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
 

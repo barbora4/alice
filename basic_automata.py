@@ -5,75 +5,6 @@ from itertools import product
 from automaton import Automaton
 from optimize import *
 
-def x_in_Y(x,Y):
-    """Constructs Buchi automaton for formula: x is in Y."""
-
-    start={"0"}
-    accept={"1"}
-    states=start|accept
-
-    alphabet_x={"{}:0".format(x), "{}:1".format(x)}
-    alphabet_Y={"{}:0".format(Y), "{}:1".format(Y)}
-    alphabet=set()
-    for a in alphabet_x:
-        for b in alphabet_Y:
-            alphabet.add("{}|{}".format(a,b))
-
-    transitions=list()
-    for s in start:
-        for a in accept:
-            # if index is not x, Y can be both 0 or 1 and we stay in the same state
-            transitions.append([s,"{}:0|{}:0".format(x,Y),s])
-            transitions.append([s,"{}:0|{}:1".format(x,Y),s])
-            transitions.append([a,"{}:0|{}:0".format(x,Y),a])
-            transitions.append([a,"{}:0|{}:1".format(x,Y),a])
-            # if index is x, Y must be 1
-            transitions.append([s,"{}:1|{}:1".format(x,Y),a])
-
-    return Automaton(states,alphabet,transitions,start,accept)
-
-
-def x_is_0(x):
-    """Constructs Buchi automaton for formula: x is equal to 0."""
-
-    start={"0"}
-    accept={"1"}
-    states=start|accept
-    alphabet=["{}:0".format(x), "{}:1".format(x)]
-
-    # index of x is 0
-    for s in start:
-        for a in accept:
-            transitions=[[s,"{}:1".format(x),a], [a,"{}:0".format(x),a]]
-
-    return Automaton(states,set(alphabet),transitions,start,accept)
-
-
-def x_is_y(x,y):
-    """Constructs Buchi automaton for formula: x is equal to y."""
-
-    start={"0"}
-    accept={"1"}
-    states=start|accept
-   
-    alphabet_x={"{}:0".format(x), "{}:1".format(x)}
-    alphabet_y={"{}:0".format(y), "{}:1".format(y)}
-    alphabet=set()
-    for a in alphabet_x:
-        for b in alphabet_y:
-            alphabet.add("{}|{}".format(a,b))
-
-    transitions=list()
-    for s in start:
-        for a in accept:
-            # index of x and y must be the same
-            transitions.append([s,"{}:0|{}:0".format(x,y),s])
-            transitions.append([a,"{}:0|{}:0".format(x,y),a])
-            transitions.append([s,"{}:1|{}:1".format(x,y),a])
-
-    return Automaton(states,alphabet,transitions,start,accept)
-
-
 def get_all_variables(a):
     """Returns set of all used variables of automaton a."""
     
@@ -94,16 +25,15 @@ def add_to_transitions(a1,alphabet1,alphabet2):
             change=True
             # add to alphabet
             alphabet1.add(a)
-            for b in copy(a1.alphabet):
-                a1.alphabet.add("{}|{}:0".format(b,a))
-                a1.alphabet.add("{}|{}:1".format(b,a))
+            for b in copy(old_alphabet):
+                old_alphabet.add("{}|{}:0".format(b,a))
+                old_alphabet.add("{}|{}:1".format(b,a))
+                old_alphabet.remove(b)
             # add to all transitions
             for i in range(len(a1.transitions)):
                 a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
 
-    if change:
-        for a in old_alphabet:
-            a1.alphabet.remove(a)
+    a1.alphabet=copy(old_alphabet)
 
 def alphabetical_order(a):
     """Sorts input variables in transitions alphabetically."""
@@ -196,27 +126,6 @@ def exists(a,X):
     b=Automaton(a.states,alphabet,transitions,a.start,a.accept)
     remove_unreachable_parts(b)
     return b
-
-
-def A_x(x):
-    """Automaton to intersect with to make sure x appears exactly once."""
-
-    a=x_is_0(x)
-    for s in a.start:
-        for acc in a.accept:
-            a.transitions.append([s,"{}:0".format(x),s])
-
-    return a
-
-
-def exist_x(a,x):
-    """Projection: eliminates x from the input alphabet and transitions of automaton a.
-
-    Same as exist_X, but first is intersected with automaton that ensures that x appears only once (first-order variable)."""
-
-    b=A_x(x)
-    a=intersection(a,b)
-    return exists(a,x)
 
 
 def sub(X,Y):

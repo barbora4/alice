@@ -2,8 +2,9 @@
 
 import itertools
 from copy import copy
-from automaton import Automaton
+from automaton import *
 from basic_automata import cylindrification
+from optimize import *
 
 def input_equal(a,t):
     """Returns True if inputs a and t are equal."""
@@ -28,18 +29,6 @@ def input_equal(a,t):
     
     return True
 
-def edit_names(states):
-    """Removes tuples from name of a state."""
-
-    states=list(states)
-    for i in range(len(states)):
-        for j in range(len(states[i])):
-            if type(states[i][j])==tuple:
-                states[i]=list(states[i])
-                states[i][j]="{}".format(','.join(map(str,states[i][j])))
-                states[i]=tuple(states[i])
-    return set(states)
-
 
 def intersection(a1,a2):
     """Algorithm for intersection of 2 Buchi automata."""
@@ -48,12 +37,12 @@ def intersection(a1,a2):
     cylindrification(a1,a2)
 
     # edit names
-    a1.states=edit_names(a1.states)
-    a1.start=edit_names(a1.start)
-    a1.accept=edit_names(a1.accept)
-    a2.states=edit_names(a2.states)
-    a2.start=edit_names(a2.start)
-    a2.accept=edit_names(a2.accept)
+    #a1.states=edit_names(a1.states)
+    #a1.start=edit_names(a1.start)
+    #a1.accept=edit_names(a1.accept)
+    #a2.states=edit_names(a2.states)
+    #a2.start=edit_names(a2.start)
+    #a2.accept=edit_names(a2.accept)
 
     W=list(itertools.product(a1.start,a2.start,{'1'}))  # all reachable states
     Q=set()                                             # visited states  
@@ -116,17 +105,8 @@ def intersection(a1,a2):
             if s[0] in a1.accept and s[2]=='1':
                 accept.add(s)
 
-    # edit names
-    W=edit_names(W)
-    start=edit_names(start)
-    accept=edit_names(accept)
-    for index in {0,2}:
-        for i in range(len(transitions)):
-            for j in range(len(transitions[i][index])):
-                if type(transitions[i][index][j])==tuple:
-                    transitions[i][index]=list(transitions[i][index])
-                    transitions[i][index][j]="{}".format(','.join(map(str,transitions[i][index][j])))
-                    transitions[i][index]=tuple(transitions[i][index])
-
-    return Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
-
+    a=Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
+    a=find_and_change_cycles(a)
+    edit_names(a)  # edit names of states and transitions
+    optimize(a)
+    return a

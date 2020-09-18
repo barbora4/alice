@@ -2,6 +2,7 @@
 
 import re
 import csv
+from copy import copy
 from dataclasses import dataclass
 
 @dataclass
@@ -111,3 +112,32 @@ def write_to_gv(a,f):
 
         # end
         f.write("}\n")
+
+
+def edit_names(a):
+    """Renames all states with numbers, starting with 0."""
+
+    a.states=list(a.states)
+    states=copy(a.states)
+    for i in range(len(states)):
+        # rename states in transitions
+        for t in a.transitions:
+            if t[0]==states[i]:
+                t[0]=str(i)
+            if t[2]==states[i]:
+                t[2]=str(i)
+        # rename start states
+        a.start=list(a.start)
+        for j in range(len(a.start)):
+            if a.start[j]==states[i]:
+                a.start[j]=str(i)
+        a.start=set(a.start)
+        # rename accept states
+        a.accept=list(a.accept)
+        for j in range(len(a.accept)):
+            if a.accept[j]==states[i]:
+                a.accept[j]=str(i)
+        a.accept=set(a.accept)
+        # rename state
+        a.states[i]=str(i)
+    a.states=set(a.states)
