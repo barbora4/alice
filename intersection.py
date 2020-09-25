@@ -36,14 +36,6 @@ def intersection(a1,a2):
     # add all variables to input alphabet and transitions
     cylindrification(a1,a2)
 
-    # edit names
-    #a1.states=edit_names(a1.states)
-    #a1.start=edit_names(a1.start)
-    #a1.accept=edit_names(a1.accept)
-    #a2.states=edit_names(a2.states)
-    #a2.start=edit_names(a2.start)
-    #a2.accept=edit_names(a2.accept)
-
     W=list(itertools.product(a1.start,a2.start,{'1'}))  # all reachable states
     Q=set()                                             # visited states  
     F=set()                                             # states [q1,q2,1] where q1 is accepting

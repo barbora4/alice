@@ -77,7 +77,7 @@ def cylindrification(a1,a2):
     alphabetical_order(a2)
 
 
-def exists(a,X):
+def exists(X,a):
     """Projection: eliminates X from the input alphabet and transitions of automaton a."""
 
     # remove X from the input alphabet

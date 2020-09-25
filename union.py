@@ -76,12 +76,6 @@ def union(a1,a2):
     for i in range(len(transitions)):
         transitions[i]=list(transitions[i])
 
-    # edit names and transitions
-    #states=edit_names(states)
-    #start=edit_names(start)
-    #accept=edit_names(accept)
-    #transitions=edit_transitions(transitions)
-
     a=Automaton(states,alphabet,transitions,start,accept)
     edit_names(a)  # edit names of states and transitions
     optimize(a)
