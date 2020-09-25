@@ -141,3 +141,36 @@ def edit_names(a):
         # rename state
         a.states[i]=str(i)
     a.states=set(a.states)
+
+def edit_transitions(a):
+    """Edits transitions -> substitutes 0/1 with '?' wherever possible."""
+
+    transitions2=copy(a.transitions)
+    edit=True
+
+    while edit:
+        edit=False
+        for t1 in a.transitions:
+            for t2 in a.transitions:
+                if t1[0]==t2[0] and t1[2]==t2[2] and t1[1]!=t2[1]:
+                    count=0     # how many characters are different
+                    change=""
+                    for c1,c2 in zip(t1[1],t2[1]):
+                        if c1!=c2:
+                            count+=1
+                            change+="?"
+                        else:
+                            change+=c1
+                    
+                    # only one different character -> substitute with '?'
+                    if count==1:
+                        edit=True
+                        new=[t1[0],change,t1[2]]
+                        if new not in transitions2:
+                            transitions2.append(new)
+                        if t1 in transitions2:
+                            transitions2.remove(t1)
+                        if t2 in transitions2:
+                            transitions2.remove(t2)
+
+        a.transitions=copy(transitions2)

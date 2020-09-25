@@ -35,7 +35,7 @@ def parse(f):
             element+=c
 
     if left!=right:
-        raise SyntaxError("Invalid form of formula.")
+        raise SyntaxError("Invalid form of input formula (parentheses not matching).")
     
     return create_automaton(formula)    
 
@@ -45,6 +45,7 @@ def create_automaton(formula):
     
     stack=[]
     atom=[]
+    first=True  
     for element in formula:
         if element!=")":
             stack.append(element)
@@ -68,11 +69,12 @@ def create_automaton(formula):
             elif atom[1]=="zeroin":
                 a=zeroin(atom[2])
             elif atom[1]=="sub":
-                print(atom)
                 a=sub(atom[2],atom[3])
             elif atom[1]=="succ":
                 a=succ(atom[2],atom[3])
             else:
+                if not first:
+                    raise SyntaxError('Invalid form of input formula in "{}".'.format(atom[1]))
                 # arguments of succ or sub are in parentheses
                 atom.remove('(')
                 atom.remove(')')
@@ -80,9 +82,11 @@ def create_automaton(formula):
                 for i in range(len(atom)):
                     stack.append(atom[len(atom)-i-1])
                 atom=[]
+                first=False
                 continue
 
             stack.append(a)
+            first=True
             atom=[]
 
     return a
