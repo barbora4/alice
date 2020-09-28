@@ -121,11 +121,11 @@ def edit_names(a):
     states=copy(a.states)
     for i in range(len(states)):
         # rename states in transitions
-        for t in a.transitions:
-            if t[0]==states[i]:
-                t[0]=str(i)
-            if t[2]==states[i]:
-                t[2]=str(i)
+        for t in range(len(a.transitions)):
+            if a.transitions[t][0]==states[i]:
+                a.transitions[t][0]=str(i)
+            if a.transitions[t][2]==states[i]:
+                a.transitions[t][2]=str(i)
         # rename start states
         a.start=list(a.start)
         for j in range(len(a.start)):
@@ -150,12 +150,12 @@ def edit_transitions(a):
 
     while edit:
         edit=False
-        for t1 in a.transitions:
-            for t2 in a.transitions:
-                if t1[0]==t2[0] and t1[2]==t2[2] and t1[1]!=t2[1]:
+        for t1 in range(len(a.transitions)):
+            for t2 in range(len(a.transitions)):
+                if a.transitions[t1][0]==a.transitions[t2][0] and a.transitions[t1][2]==a.transitions[t2][2] and a.transitions[t1][1]!=a.transitions[t2][1]:
                     count=0     # how many characters are different
                     change=""
-                    for c1,c2 in zip(t1[1],t2[1]):
+                    for c1,c2 in zip(a.transitions[t1][1],a.transitions[t2][1]):
                         if c1!=c2:
                             count+=1
                             change+="?"
@@ -165,12 +165,12 @@ def edit_transitions(a):
                     # only one different character -> substitute with '?'
                     if count==1:
                         edit=True
-                        new=[t1[0],change,t1[2]]
+                        new=[a.transitions[t1][0],change,a.transitions[t1][2]]
                         if new not in transitions2:
                             transitions2.append(new)
-                        if t1 in transitions2:
-                            transitions2.remove(t1)
-                        if t2 in transitions2:
-                            transitions2.remove(t2)
+                        if a.transitions[t1] in transitions2:
+                            transitions2.remove(a.transitions[t1])
+                        if a.transitions[t2] in transitions2:
+                            transitions2.remove(a.transitions[t2])
 
         a.transitions=copy(transitions2)

@@ -99,8 +99,11 @@ def intersection(a1,a2):
 
     a=Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
     a=find_and_change_cycles(a)
+    
+    optimize(a)
+
     # edit names of states and transitions
     edit_names(a)
     edit_transitions(a)
-    optimize(a)
+   
     return a

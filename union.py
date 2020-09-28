@@ -12,6 +12,10 @@ def union(a1,a2):
     # add all variables to input alphabet and transitions
     cylindrification(a1,a2)
 
+    # don't do any algorithm for two same automata
+    if a1==a2:
+        return a1
+
     start = {"S"}         # new start state
     
     # unique name for every state
@@ -77,6 +81,11 @@ def union(a1,a2):
         transitions[i]=list(transitions[i])
 
     a=Automaton(states,alphabet,transitions,start,accept)
-    edit_names(a)  # edit names of states and transitions
+    
     optimize(a)
+   
+    # edit names of states and transitions
+    edit_names(a)  
+    edit_transitions(a)
+
     return a

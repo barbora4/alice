@@ -190,7 +190,11 @@ def remove_unreachable_parts(a):
     # Remove unreachable accept states
     accept2=copy(a.accept)
     for i in a.accept:
-        if (not any(t[0]==i or t[2]==i for t in a.transitions)):
+        if i not in a.states:
+            accept2.remove(i)
+        elif (not any(t[0]==i or t[2]==i for t in a.transitions)):
+            accept2.remove(i)
+        elif not any(t[2]==i for t in a.transitions):
             accept2.remove(i)
     a.accept=copy(accept2)
    
@@ -202,10 +206,28 @@ def remove_unreachable_parts(a):
 
     return a
 
+def accept_all(a):
+    """Checks if automaton accepts all words over alphabet."""
+
+    for t in a.transitions:
+        if t[0] in a.start:
+            if all(t[1][j]=="?" for j in range(2,len(t[1])+1,4)):
+                if any(t2[0]==t2[2] and t2[0]==t[2] and all(t2[1][k]=="?" for k in range(2,len(t2[1])+1,4)) for t2 in a.transitions):
+                    a.start={"0"}
+                    a.accept={"0"}
+                    a.states={"0"}
+                    for c in a.alphabet:
+                        new=c
+                        break
+                    new=new.replace("0",'?')
+                    new=new.replace("1",'?')
+                    a.transitions=[['0', new, '0']]
+                    return True
+    return False
 
 def optimize(a):
     """Reduces double cycles and removes useless strongly connected components."""
 
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
-
+    accept_all(a)
