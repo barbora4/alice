@@ -3,7 +3,7 @@
 from itertools import product
 from copy import copy 
 from automaton import *
-from basic_automata import cylindrification
+from atomic_automata import cylindrification
 from optimize import optimize
 
 def union(a1,a2):
@@ -55,6 +55,7 @@ def union(a1,a2):
                 transitions.add((s,t[1],t[2]))
             
             if not any(i[0]==t[0] and i[0]==i[2] for i in old_transitions):
+                # remove old start states without self loop
                 transitions.remove(t)
             elif t[0]==t[2]:
                 # old start state with self loop won't be removed

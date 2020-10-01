@@ -1,4 +1,5 @@
-s1s: automaton.py intersection.py optimize.py main.py union.py basic_automata.py parser.py
+s1s: automaton.py intersection.py optimize.py main.py union.py atomic_automata.py parser.py
 	python3 main.py
 	dot -Tps graph.gv -o graph.pdf
 	evince graph.pdf &
+	cat a.ba

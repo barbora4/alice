@@ -3,13 +3,12 @@
 from automaton import Automaton
 from intersection import *
 from union import *
-from basic_automata import *
+from atomic_automata import *
 
 def parse(f):
     """Creates a list of elements from LISP formula."""
 
-    with open(f) as f:
-        text=f.read()
+    text=f.read()
 
     formula=[]
     element=""
@@ -26,10 +25,12 @@ def parse(f):
                 left+=1
             if c==')':
                 right+=1
+        
         # skip spaces
         elif c.isspace() and element!="":
             formula.append(element)
             element=""
+        
         # load whole element
         elif not c.isspace():
             element+=c
@@ -58,12 +59,22 @@ def create_automaton(formula):
             atom.reverse()
 
             # operations with automata
+            error=False
             if atom[1]=="exists":
-                a=exists(atom[2],atom[3])
+                if not (isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton)):
+                    error=True
+                else:
+                    a=exists(atom[2],atom[3])
             elif atom[1]=="and":
-                a=intersection(atom[2],atom[3])
+                if not (isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton)):
+                    error=True
+                else:
+                    a=intersection(atom[2],atom[3])
             elif atom[1]=="or":
-                a=union(atom[2],atom[3])
+                if not (isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton)):
+                    error=True
+                else:
+                    a=union(atom[2],atom[3])
 
             # atomic automata
             elif atom[1]=="zeroin":
@@ -73,8 +84,11 @@ def create_automaton(formula):
             elif atom[1]=="succ":
                 a=succ(atom[2],atom[3])
             else:
-                if not first:
-                    raise SyntaxError('Invalid form of input formula in "{}".'.format(atom[1]))
+                if (not first) or len(atom)!=4:
+                    raise SyntaxError('Invalid form of input formula near "{}".'.format(' '.join(map(str,atom))))
+                if isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton):
+                    raise SyntaxError('Invalid form of input formula near "{}".'.format(atom[1]))
+
                 # arguments of succ or sub are in parentheses
                 atom.remove('(')
                 atom.remove(')')
@@ -85,6 +99,8 @@ def create_automaton(formula):
                 first=False
                 continue
 
+            if error:
+                raise SyntaxError('Invalid form of input formula near "{}".'.format(atom[1]))
             stack.append(a)
             first=True
             atom=[]

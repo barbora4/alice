@@ -27,9 +27,10 @@ def tarjan(a):
         for w in a.states:
             if any(t[2]==w and t[0]==v for t in a.transitions):
                 if visited[w][0]==-1:
-                    # Successor w has not yet been visited -> recurse
+                    # Successor w has not yet been visited -> recursion
                     scc(w)
                     visited[v][1]=min(visited[v][1],visited[w][1])
+                
                 elif visited[w][2]:
                     # Successor w is on stack and hence in the current SCC
                     # If w is not on stack, then (v,w) is a transition pointing to an SCC already found and must be ignored
@@ -40,11 +41,13 @@ def tarjan(a):
             # Start a new strongly connected component
             component=set()
             w=stack.pop()
+
             while w!=v:
                 visited[w][2]=False
                 # Add w to current scc
                 component.add(w)
                 w=stack.pop()
+            
             visited[w][2]=False
             component.add(w)
             all_components.append(component)
@@ -64,6 +67,7 @@ def remove_useless_scc(a):
         change=False
         for c in components:
             remove=True
+            
             # Components from which it can't be reached to any other scc and where no state is accepting or 
             # it contains only one state which is accepting
             if (not any(state in a.accept for state in c)) or (len(c)==1 and all(state in a.accept for state in c)):
@@ -72,6 +76,7 @@ def remove_useless_scc(a):
                         remove=False
                     if len(c)==1 and state in a.accept and any((t[0]==state and t[2]==state) for t in a.transitions):
                         remove=False
+                
                 # Remove whole component
                 if remove:
                     change=True
@@ -87,6 +92,7 @@ def remove_useless_scc(a):
                                 a.transitions.remove(t)
                     components.remove(c)
 
+
 def find_and_change_cycles(a):
     """Finds double cycles and reduces them if possible."""
 
@@ -95,6 +101,7 @@ def find_and_change_cycles(a):
     while not end:
         end=True
         for q in a.accept:
+            
             # Every accept state has list [[[visited_states],[inputs]]]
             # Every possible path from q is in visited1
             visited1=[[[q], list()]]
@@ -102,6 +109,7 @@ def find_and_change_cycles(a):
                 # Visited state is the corresponding state in the 2nd copy or such a state doesn't exist
                 if (v[0][0]==q[0] and v[0][1]==q[1] and v[0][2]!=q[2]) or (q[0],q[1],2) not in a.states:
                     break
+                
                 seen_states=list()  # All states seen on the path
                 for t in a.transitions:
                     # All transitions from the last visited state
@@ -122,6 +130,7 @@ def find_and_change_cycles(a):
                     new_state=[copy(v[0][-1])] 
                     new_state2=list()
                     new_list=copy(v[1])
+                    
                     for i in v[1]:  # for every input symbol
                         first=True
                         for t in a.transitions:
@@ -132,6 +141,7 @@ def find_and_change_cycles(a):
                                 new=copy([copy(t[2]), copy(new_list)])
                                 visited2.append(new) 
                                 new_state2.append(t[2]) 
+                                
                                 # Cycle was found
                                 if len(new[1])==0 and new[0]==v[0][0]: 
                                     # Cycle new[0]->v[0][-1]->new[0] for input 2*v[1]
@@ -149,12 +159,14 @@ def find_and_change_cycles(a):
     # add new accept states
     for q in accept2:
         a.accept.add(q)
+    
     # remove old accept states
     accept2=copy(a.accept)
     for q in a.accept:
         if q not in a.states and q not in accept2:
             accept2.remove(q)
     a.accept=copy(accept2)
+    
     return a
 
 

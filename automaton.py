@@ -1,4 +1,4 @@
-"""Class Automaton, loading from .ba files and writing to them."""
+"""Class Automaton, loading data from .ba files and writing to them."""
 
 import re
 import csv
@@ -58,11 +58,14 @@ def write_to_file(a,f):
     """Writes automaton to .ba file."""
 
     with open(f, "w") as f:
+        # start states
         for i in a.start:
             if type(i)==tuple:
                 f.write('[{}]\n'.format(','.join(map(str,i))))
             else:
                 f.write('[{}]\n'.format(i))
+        
+        # transitions
         for i in a.transitions:
             if type(i[0])==tuple:
                 t1='[%s]'%','.join(map(str, i[0]))
@@ -73,14 +76,17 @@ def write_to_file(a,f):
             else:
                 t2="[{}]".format(i[2])
             f.write("{},{}->{}\n".format(i[1],t1,t2))
+        
+        # accept states
         for i in a.accept:
             if type(i)==tuple:
                 f.write('[{}]\n'.format(','.join(map(str,i))))
             else:
                 f.write('[{}]\n'.format(i))
- 
+
+
 def write_to_gv(a,f):
-    """Writes automaton into .gv file."""
+    """Writes automaton a into .gv file f."""
 
     with open(f, "w") as f:
         # beginning
@@ -126,20 +132,24 @@ def edit_names(a):
                 a.transitions[t][0]=str(i)
             if a.transitions[t][2]==states[i]:
                 a.transitions[t][2]=str(i)
+        
         # rename start states
         a.start=list(a.start)
         for j in range(len(a.start)):
             if a.start[j]==states[i]:
                 a.start[j]=str(i)
         a.start=set(a.start)
+        
         # rename accept states
         a.accept=list(a.accept)
         for j in range(len(a.accept)):
             if a.accept[j]==states[i]:
                 a.accept[j]=str(i)
         a.accept=set(a.accept)
+        
         # rename state
         a.states[i]=str(i)
+    
     a.states=set(a.states)
 
 def edit_transitions(a):
@@ -152,9 +162,10 @@ def edit_transitions(a):
         edit=False
         for t1 in range(len(a.transitions)):
             for t2 in range(len(a.transitions)):
+                # two transitions with the same start and accept states
                 if a.transitions[t1][0]==a.transitions[t2][0] and a.transitions[t1][2]==a.transitions[t2][2] and a.transitions[t1][1]!=a.transitions[t2][1]:
                     count=0     # how many characters are different
-                    change=""
+                    change=""   # new transition name
                     for c1,c2 in zip(a.transitions[t1][1],a.transitions[t2][1]):
                         if c1!=c2:
                             count+=1
@@ -166,11 +177,11 @@ def edit_transitions(a):
                     if count==1:
                         edit=True
                         new=[a.transitions[t1][0],change,a.transitions[t1][2]]
-                        if new not in transitions2:
-                            transitions2.append(new)
                         if a.transitions[t1] in transitions2:
                             transitions2.remove(a.transitions[t1])
                         if a.transitions[t2] in transitions2:
                             transitions2.remove(a.transitions[t2])
+                        if new not in transitions2:
+                            transitions2.append(new)
 
         a.transitions=copy(transitions2)
