@@ -59,7 +59,8 @@ def tarjan(a):
     return all_components
 
 def remove_useless_scc(a):
-    """Removes useless strongly connected components - components from which we can't reach to any other scc and no state in scc is accepting or components containing only one accepting state with no transition from it."""
+    """Removes useless strongly connected components - components from which we can't reach to any other scc 
+    and no state in scc is accepting or components containing only one accepting state with no transition from it."""
 
     components=tarjan(a)
     change=True
@@ -81,15 +82,16 @@ def remove_useless_scc(a):
                 if remove:
                     change=True
                     for state in c:
-                        a.states.remove(state)
-                        if state in a.start:
-                            a.start.remove(state)
-                        if state in a.accept:
-                            a.accept.remove(state)
-                        transitions=copy(a.transitions)
-                        for t in transitions:
-                            if t[0]==state or t[2]==state:
-                                a.transitions.remove(t)
+                        if state not in a.start:
+                            a.states.remove(state)
+                            if state in a.start:
+                                a.start.remove(state)
+                            if state in a.accept:
+                                a.accept.remove(state)
+                            transitions=copy(a.transitions)
+                            for t in transitions:
+                                if t[0]==state or t[2]==state:
+                                    a.transitions.remove(t)
                     components.remove(c)
 
 
@@ -210,12 +212,6 @@ def remove_unreachable_parts(a):
             accept2.remove(i)
     a.accept=copy(accept2)
    
-    if len(a.transitions)==0:
-        a.start=set()
-        a.accept=set()
-        a.states=set()
-        a.alphabet=set()
-
     return a
 
 def accept_all(a):
