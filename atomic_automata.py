@@ -31,7 +31,10 @@ def add_to_transitions(a1,alphabet1,alphabet2):
                 old_alphabet.remove(b)
             # add to all transitions
             for i in range(len(a1.transitions)):
-                a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
+                if a1.transitions[i][1] != "":
+                    a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
+                else:
+                    a1.transitions[i][1]="{}".format("{}:{}".format(a, '?'))
 
     a1.alphabet=copy(old_alphabet)
 
@@ -77,6 +80,16 @@ def cylindrification(a1,a2):
     alphabetical_order(a2)
 
 
+def  true():
+    """Returns automaton for true formula."""
+
+    return Automaton(set("0"), set(), [["0", "", "0"]], set("0"), set("0"))
+
+def false():
+    """Returns automaton for false formula."""
+
+    return Automaton(set("0"), set(), list(), set("0"), set())
+
 def exists(X,a):
     """Projection: eliminates X from the input alphabet and transitions of automaton a."""
 
@@ -88,6 +101,7 @@ def exists(X,a):
             if X in j:
                 t.remove(j)
         first=True
+        alphabet[i] = ''
         for j in t:
             if first:
                 alphabet[i]=j
@@ -95,6 +109,8 @@ def exists(X,a):
             else:
                 alphabet[i]="{}|{}".format(alphabet[i],j)
     alphabet=set(alphabet)
+    if '' in alphabet:
+        alphabet.remove('')
 
     # remove X from all transitions
     transitions=copy(a.transitions)
@@ -113,17 +129,23 @@ def exists(X,a):
         if first:
             i[1]=""
 
-    # remove empty transitions
-    for t in copy(transitions):
-        if len(t[1])==0:
-            transitions.remove(t)
-
     # remove duplicate transitions
     for t in transitions:
         if transitions.count(t)>1:
             transitions.remove(t)
 
     b=Automaton(a.states,alphabet,transitions,a.start,a.accept)
+    
+    # empty alphabet
+    if len(alphabet)==0:
+        # true if it contains at least one accept state, otherwise false
+        if len(a.accept)>0:
+            # true
+            return true()
+        else:
+            # false
+            return false()
+
     remove_unreachable_parts(b)
     edit_transitions(b)
     return b
