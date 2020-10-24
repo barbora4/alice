@@ -4,6 +4,7 @@ from automaton import Automaton
 from intersection import *
 from union import *
 from atomic_automata import *
+from complement import *
 
 def parse(f):
     """Creates a list of elements from LISP formula."""
@@ -75,6 +76,11 @@ def create_automaton(formula):
                     error=True
                 else:
                     a=union(atom[2],atom[3])
+            elif atom[1]=="neg":
+                if not (isinstance(atom[2], Automaton)):
+                    error=True
+                else:
+                    a=complement(atom[2])
 
             # atomic automata
             elif atom[1]=="zeroin":

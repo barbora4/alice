@@ -90,7 +90,7 @@ def write_to_gv(a,f):
 
     with open(f, "w") as f:
         # beginning
-        f.write("digraph finite_state_machine {\n")
+        f.write("digraph buchi_automaton {\n")
         f.write("\trankdir=LR;\n")
         f.write('\tsize="8,5"\n')
         f.write("\tnode [shape = doublecircle];")
@@ -123,34 +123,35 @@ def write_to_gv(a,f):
 def edit_names(a):
     """Renames all states with numbers, starting with 0."""
 
+    dictionary={}
+    i=0
+    for state in a.states:
+        dictionary[str(i)]=state
+        i+=1
+
+    # rename states
     a.states=list(a.states)
-    states=copy(a.states)
-    for i in range(len(states)):
-        # rename states in transitions
-        for t in range(len(a.transitions)):
-            if a.transitions[t][0]==states[i]:
-                a.transitions[t][0]=str(i)
-            if a.transitions[t][2]==states[i]:
-                a.transitions[t][2]=str(i)
-        
-        # rename start states
-        a.start=list(a.start)
-        for j in range(len(a.start)):
-            if a.start[j]==states[i]:
-                a.start[j]=str(i)
-        a.start=set(a.start)
-        
-        # rename accept states
-        a.accept=list(a.accept)
-        for j in range(len(a.accept)):
-            if a.accept[j]==states[i]:
-                a.accept[j]=str(i)
-        a.accept=set(a.accept)
-        
-        # rename state
-        a.states[i]=str(i)
-    
+    for i in range(len(a.states)):
+        a.states[i]=list(dictionary.keys())[list(dictionary.values()).index(a.states[i])]
     a.states=set(a.states)
+
+    # rename start states
+    a.start=list(a.start)
+    for i in range(len(a.start)):
+        a.start[i]=list(dictionary.keys())[list(dictionary.values()).index(a.start[i])]
+    a.start=set(a.start)
+
+    # rename accept states
+    a.accept=list(a.accept)
+    for i in range(len(a.accept)):
+        a.accept[i]=list(dictionary.keys())[list(dictionary.values()).index(a.accept[i])]
+    a.accept=set(a.accept)
+
+    # rename transitions
+    for i in range(len(a.transitions)):
+        a.transitions[i][0]=list(dictionary.keys())[list(dictionary.values()).index(a.transitions[i][0])]
+        a.transitions[i][2]=list(dictionary.keys())[list(dictionary.values()).index(a.transitions[i][2])]
+
 
 def edit_transitions(a):
     """Edits transitions -> substitutes 0/1 with '?' wherever possible."""

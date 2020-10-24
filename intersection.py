@@ -8,7 +8,7 @@ from optimize import *
 
 def input_equal(a,t):
     """Returns True if inputs a and t are equal."""
-
+    
     if '|' not in a:
         if a==t:
             return True
