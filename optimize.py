@@ -2,6 +2,7 @@
 
 from automaton import Automaton
 from intersection import *
+from direct import reduction
 
 def tarjan(a):
     """Tarjan's algorithm."""
@@ -216,7 +217,7 @@ def remove_unreachable_parts(a):
 
 def accept_all(a):
     """Checks if automaton accepts all words over alphabet."""
-
+    
     for t in a.transitions:
         if t[0] in a.start:
             if all(t[1][j]=="?" for j in range(2,len(t[1])+1,4)):
@@ -230,8 +231,6 @@ def accept_all(a):
                     new=new.replace("0",'?')
                     new=new.replace("1",'?')
                     a.transitions=[['0', new, '0']]
-                    return True
-    return False
 
 def optimize(a):
     """Reduces double cycles and removes useless strongly connected components."""
@@ -239,3 +238,4 @@ def optimize(a):
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
     accept_all(a)
+    reduction(a)

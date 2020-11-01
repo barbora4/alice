@@ -148,6 +148,7 @@ def exists(X,a):
 
     remove_unreachable_parts(b)
     edit_transitions(b)
+    optimize(b)
     return b
 
 
