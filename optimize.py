@@ -2,6 +2,7 @@
 
 from automaton import Automaton
 from intersection import *
+from direct import reduction
 
 def tarjan(a):
     """Tarjan's algorithm."""
@@ -237,3 +238,4 @@ def optimize(a):
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
     accept_all(a)
+    reduction(a)

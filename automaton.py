@@ -186,3 +186,29 @@ def edit_transitions(a):
                             transitions2.append(new)
 
         a.transitions=copy(transitions2)
+
+
+def input_equal(a,t):
+    """Returns True if inputs a and t are equal."""
+    
+    if '|' not in a:
+        if a==t:
+            return True
+
+    # divide into variables
+    a_list=list()
+    a_list=list(a.split('|'))
+    a_list.sort()
+
+    t_list=list()
+    t_list=list(t.split('|'))
+    t_list.sort()
+
+    # substitute ? with 0 or 1
+    for i in range(len(a_list)):
+        if not (a_list[i]==t_list[i] or a_list[i].replace('?','0')==t_list[i] or a_list[i].replace('?','1')==t_list[i] or t_list[i].replace('?','0')==a_list[i] or t_list[i].replace('?','1')==a_list[i]):
+            return False
+    
+    return True
+
+
