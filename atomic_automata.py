@@ -147,6 +147,7 @@ def exists(X,a):
             return false()
 
     remove_unreachable_parts(b)
+    edit_names(b)
     edit_transitions(b)
     optimize(b)
     return b
@@ -198,8 +199,10 @@ def succ(Y,X):
                 transitions.append([a,"{}:1|{}:1".format(X,Y),a])
                 transitions.append([a,"{}:0|{}:1".format(X,Y),s])
     
-    return Automaton(states,alphabet,transitions,start,accept)
+    a=Automaton(states,alphabet,transitions,start,accept)
+    alphabetical_order(a)
 
+    return a
 
 def zeroin(X):
     """Constructs Buchi automaton for formula: 0 is an element of X."""
@@ -210,13 +213,24 @@ def zeroin(X):
     
     transitions=list()
     # first input must be X:1
-    for s in start:
-        for a in accept:
-                transitions.append([s,"{}:1".format(X),a])
-                transitions.append([a,"{}:?".format(X),a])
+    transitions.append(["0","{}:1".format(X),"1"])
+    transitions.append(["1","{}:?".format(X),"1"])
     
     states=start|accept
 
     return Automaton(states,set(alphabet),transitions,start,accept)
 
+def sing(X):
+    """X is a singleton."""
 
+    start={"0"}
+    accept={"1"}
+    alphabet=["{}:0".format(X), "{}:1".format(X)]
+    states = start|accept
+
+    transitions=list()
+    transitions.append(["0", "{}:0".format(X), "0"])
+    transitions.append(["0", "{}:1".format(X), "1"])
+    transitions.append(["1", "{}:0".format(X), "1"])
+
+    return Automaton(states, set(alphabet), transitions, start, accept)

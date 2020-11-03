@@ -39,10 +39,10 @@ def direct_simulation(a):
                     mat[c][int(new[0])][int(t[0])] += 1
                     if mat[c][int(new[0])][int(t[0])] == card[c][t[0]]:
                         for t2 in a.transitions:
-                            if t[0]==new[1] and t[2]==new[0] and input_equal(c, t[1]):
-                                if (new[1], t[0]) not in w:
-                                    w.add(new[1], t[0])
-                                    queue.append((new[1],t[0]))
+                            if t2[2]==new[0] and input_equal(c, t2[1]): #####
+                                if (t2[0], t[0]) not in w: #####
+                                    w.add((t2[0], t[0])) #####
+                                    queue.append((t2[0],t[0])) #####
     
     all_combinations = set(product(a.states, a.states))
     direct = all_combinations - w   # direct simulation
@@ -61,14 +61,14 @@ def reduction(a):
         direct = direct_simulation(a)
 
         for d in direct:
-            if (d[1],d[0]) in direct and d[0]!=d[1] and d[0] not in a.start and d[1] not in a.start:
+            if (d[1],d[0]) in direct and d[0]!=d[1]:
                 # merge these two states and update preorder
                 change = True
                 # add new state
                 a.states.add("new")
                 if d[0] in a.start or d[1] in a.start:
                     a.start.add("new")
-                if d[0] in a.accept and d[1] in a.accept:
+                if d[0] in a.accept or d[1] in a.accept:
                     a.accept.add("new")
                 # remove old states
                 a.states.remove(d[0])

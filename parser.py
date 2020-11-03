@@ -62,17 +62,22 @@ def create_automaton(formula):
             # operations with automata
             error=False
             if atom[1]=="exists":
-                if not (isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton)):
+                if not (isinstance(atom[3], Automaton)):
                     error=True
                 else:
                     a=exists(atom[2],atom[3])
+            elif atom[1]=="forall":
+                if not (isinstance(atom[3], Automaton)):
+                    error=True
+                else:
+                    a=complement(exists(atom[2], complement(atom[3])))
             elif atom[1]=="and":
-                if not (isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton)):
+                if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
                 else:
                     a=intersection(atom[2],atom[3])
             elif atom[1]=="or":
-                if not (isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton)):
+                if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
                 else:
                     a=union(atom[2],atom[3])
@@ -81,10 +86,17 @@ def create_automaton(formula):
                     error=True
                 else:
                     a=complement(atom[2])
+            elif atom[1]=="implies":
+                if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
+                    error=True
+                else:
+                    a=union(complement(atom[2]), atom[3])
 
             # atomic automata
             elif atom[1]=="zeroin":
                 a=zeroin(atom[2])
+            elif atom[1]=="sing":
+                a=sing(atom[2])
             elif atom[1]=="sub":
                 a=sub(atom[2],atom[3])
             elif atom[1]=="succ":

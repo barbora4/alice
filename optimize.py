@@ -225,6 +225,7 @@ def accept_all(a):
                     a.start={"0"}
                     a.accept={"0"}
                     a.states={"0"}
+                    new=""
                     for c in a.alphabet:
                         new=c
                         break
