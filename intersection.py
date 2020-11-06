@@ -31,6 +31,7 @@ def intersection(a1,a2):
                 if input_equal(a,t1[1]) and t1[0]==q[0]: 
                     for t2 in a2.transitions:
                         if input_equal(a,t2[1]) and t2[0]==q[1]: 
+                            
                             # if state of the 1st automaton in the 1st copy is not accepting, we stay in the 1st copy
                             if q[2]=='1' and q[0] not in a1.accept:
                                 if [q,a,[t1[2],t2[2],'1']] not in transitions:
@@ -79,11 +80,6 @@ def intersection(a1,a2):
     a=Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
 
     a=find_and_change_cycles(a)
-    edit_names(a)
-    edit_transitions(a)
     optimize(a)
 
-    # edit names of states and transitions
-    edit_names(a)
-     
     return a

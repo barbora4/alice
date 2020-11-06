@@ -180,8 +180,8 @@ def succ(Y,X):
     """Constructs atomic automaton for formula: Y is a successor of X."""
 
     start={"0"}
-    accept=copy(start)|{"1"}
-    states=start|accept
+    accept={"0", "1"}
+    states={"0", "1"}
    
     alphabet_X={"{}:0".format(X), "{}:1".format(X)}
     alphabet_Y={"{}:0".format(Y), "{}:1".format(Y)}
@@ -191,13 +191,10 @@ def succ(Y,X):
             alphabet.add("{}|{}".format(a,b))
 
     transitions=list()
-    for s in start:
-        for a in accept:
-            if a not in start:
-                transitions.append([s,"{}:0|{}:0".format(X,Y),s])
-                transitions.append([s,"{}:1|{}:0".format(X,Y),a])
-                transitions.append([a,"{}:1|{}:1".format(X,Y),a])
-                transitions.append([a,"{}:0|{}:1".format(X,Y),s])
+    transitions.append(["0","{}:0|{}:0".format(X,Y),"0"])
+    transitions.append(["0","{}:1|{}:0".format(X,Y),"1"])
+    transitions.append(["1","{}:1|{}:1".format(X,Y),"1"])
+    transitions.append(["1","{}:0|{}:1".format(X,Y),"0"])
     
     a=Automaton(states,alphabet,transitions,start,accept)
     alphabetical_order(a)

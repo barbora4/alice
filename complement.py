@@ -16,9 +16,6 @@ def one_start_state(b):
             if not any(i[0]==t[0] and i[0]==i[2] for i in old_transitions):
                 # remove old start states without self loop
                 b.transitions.remove(t)
-            elif t[0]==t[2]:
-                # old start state with self loop won't be removed
-                b.transitions.append(("new",t[1],t[2]))
             # if one of the old start states was accepting, the new one will be as well
             if t[0] in b.accept:
                 b.accept.add("new")
@@ -46,8 +43,6 @@ def one_start_state(b):
             tran.append(t)
     b.transitions = copy(tran)
 
-    edit_names(b)
-    edit_transitions(b)
     optimize(b)
 
 
@@ -86,7 +81,7 @@ def complement(a):
     accept=list()
     not_start=set(a.states)-set(a.start)  # all states that are not start states
     for dictionary in R:
-        # state is ranked with '_' iff it is not a start state
+        # state is ranked with -1 iff it is not a start state
         if (all (dictionary[state]!=-1 for state in a.start)) and (all (dictionary[state]==-1 for state in not_start)):
             # first component identifies the level ranking
             # second component tracks the states whose corresponding vertices in the run DAG have even ranks
@@ -96,39 +91,51 @@ def complement(a):
     # transitions
     states = copy(start)
     transitions=list()
-    for state in states:
+    i=0
+    while i < len(states):
         for c in a.alphabet:
             reachable_states = set()
             for t in a.transitions:
-                if t[0] in state[0] and state[0][t[0]]!=-1 and input_equal(c, t[1]):
+                if states[i][0][t[0]]!=-1 and input_equal(c, t[1]):
                     # reachable states
                     reachable_states.add(t[2])
             
-            # find level ranking that covers state[0]
+            # find level ranking that covers states[i][0]
             # ranking has to be lower or equal for every state
             not_reachable=a.states-reachable_states
             for dictionary in R:
-                if all((dictionary[q]<=max(state[0].values()) and dictionary[q]!=-1) for q in reachable_states) and all(dictionary[q]==-1 for q in not_reachable):
-                    # second component of a state
-                    P=set()
-                    for q in a.states:
-                        if dictionary[q]%2==0:
-                            if state[1]!=set():
-                                if q in state[1]:
+                skip=False
+
+                # first component of a state
+                if all(dictionary[q]==-1 for q in not_reachable):
+                    for q in reachable_states:
+                        maximum = -1
+                        for t in a.transitions:
+                            if t[2]==q and t[0] in states[i][0] and input_equal(c, t[1]): #####
+                                maximum = max(maximum, states[i][0][t[0]])
+                        if not (dictionary[q]<=maximum and dictionary[q]!=-1):
+                            skip=True
+                    
+                    if not skip:
+                        # second component of a state
+                        P=set()
+                        for q in a.states:
+                            if dictionary[q]%2==0:
+                                if len(states[i][1])!=0:
+                                    if any(t[0] in states[i][1] and input_equal(c, t[1]) and t[2]==q for t in a.transitions): #####!!!!!
+                                        P.add(q)
+                                else:
                                     P.add(q)
-                            else:
-                                P.add(q)
-                    new=(dictionary, P)
-                    transitions.append([state, c, new])
-                    if new not in states:
-                        states.append(new)
-                    if P==set() and new not in accept:
-                        accept.append(new)
+                        new=(dictionary, P)
+                        transitions.append([states[i], c, new])
+                        if new not in states:
+                            states.append(new)
+                        if len(P)==0 and new not in accept:
+                            accept.append(new)
+        i+=1
 
     b=Automaton(states, a.alphabet, transitions, start, accept)
-    edit_names(b)
     optimize(b)
-    
     one_start_state(b)  # automaton will have only one start state
 
     return b

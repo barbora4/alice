@@ -85,8 +85,4 @@ def union(a1,a2):
     
     optimize(a)
    
-    # edit names of states and transitions
-    edit_names(a)  
-    edit_transitions(a)
-    
     return a

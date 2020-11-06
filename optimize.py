@@ -221,7 +221,7 @@ def accept_all(a):
     for t in a.transitions:
         if t[0] in a.start:
             if all(t[1][j]=="?" for j in range(2,len(t[1])+1,4)):
-                if any(t2[0]==t2[2] and t2[0]==t[2] and all(t2[1][k]=="?" for k in range(2,len(t2[1])+1,4)) for t2 in a.transitions):
+                if any(t2[0]==t2[2] and t2[0]==t[2] and t2[0] in a.accept and all(t2[1][k]=="?" for k in range(2,len(t2[1])+1,4)) for t2 in a.transitions):
                     a.start={"0"}
                     a.accept={"0"}
                     a.states={"0"}
@@ -236,7 +236,10 @@ def accept_all(a):
 def optimize(a):
     """Reduces double cycles and removes useless strongly connected components."""
 
+    edit_names(a)
+    edit_transitions(a)
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
-    accept_all(a)
     reduction(a)
+    accept_all(a)
+    edit_names(a)

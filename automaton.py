@@ -95,7 +95,7 @@ def write_to_gv(a,f):
         f.write('\tsize="8,5"\n')
         f.write("\tnode [shape = doublecircle];")
         for acc in a.accept:
-            f.write(' {}'.format(''.join(map(str,acc)).replace(',','')))
+            f.write(' "{}"'.format(acc))
         if len(a.accept)!=0:
             f.write(";\n")
         else:
@@ -104,17 +104,11 @@ def write_to_gv(a,f):
             f.write('\tinit [label="", shape=point]\n')
         f.write("\tnode [shape = circle];\n")
 
-        # states
-        for s in a.states:
-            f.write('\t{} [label="{}"];\n'.format(''.join(map(str,s)).replace(',',''), ','.join(map(str,s))))
-
         # transitions
         for s in a.start:
-            f.write('\tinit -> {}\n'.format(''.join(map(str,s)).replace(',','')))
+            f.write('\tinit -> "{}"\n'.format(s))
         for t in a.transitions:
-            t0="{}".format(''.join(map(str,t[0])).replace(',',''))
-            t2="{}".format(''.join(map(str,t[2])).replace(',',''))
-            f.write('\t{} -> {} [ label = "{}" ];\n'.format(t0,t2,t[1]))
+            f.write('\t"{}" -> "{}" [ label = "{}" ]\n'.format(t[0], t[2], t[1]))
 
         # end
         f.write("}\n")
