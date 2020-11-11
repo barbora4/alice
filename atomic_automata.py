@@ -212,7 +212,7 @@ def zeroin(X):
     # first input must be X:1
     transitions.append(["0","{}:1".format(X),"1"])
     transitions.append(["1","{}:?".format(X),"1"])
-    
+
     states=start|accept
 
     return Automaton(states,set(alphabet),transitions,start,accept)

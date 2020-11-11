@@ -5,17 +5,97 @@ from intersection import *
 from union import *
 from atomic_automata import *
 from complement import *
+from comp import *
 
-def parse(f):
+def analyse_predicates(file_text):
+    """Analyses user-defined predicates."""
+
+    predicates={}
+
+    # user-defined predicates
+    lines = file_text.split('\n')
+    error=False
+    for line in lines:
+        if len(line)!=0 and line.split()[0]=="#define": #line[0]=='#':
+            my_predicate=""
+            i=7
+            if not line[i].isspace():
+                error=True
+                break
+            
+            # skip spaces
+            while i<len(line) and line[i].isspace():
+                i+=1
+
+            if line[i]!='(':
+                # wrong format
+                error=True
+                break
+
+            # predicate in parentheses
+            left=0
+            right=0
+            while i<len(line):
+                if line[i]=='(':
+                    left+=1
+                elif line[i]==')':
+                    right+=1
+                my_predicate+=line[i]
+                i+=1
+                if left==right and left!=0:
+                    break
+
+            while i<len(line) and line[i].isspace():
+                i+=1
+            if i==len(line):
+                error=True
+            
+            # predicate definition
+            definition=""
+            while i<len(line):
+                definition+=line[i]
+                i+=1
+            
+            new_pred=""
+            i=1
+            while i<len(my_predicate):
+                if my_predicate[i]=='(' or my_predicate[i].isspace():
+                    break
+                new_pred+=my_predicate[i]
+                i+=1
+            
+            variables=[]
+            while i<len(my_predicate):
+                if my_predicate[i].isalpha():
+                    variables.append(my_predicate[i])
+                i+=1
+
+            predicates[new_pred]=[variables, definition]
+        
+        else:
+            break
+
+    if error:
+        raise SyntaxError("Wrong format of user-defined predicates!")
+
+    return predicates
+
+
+def parse(file_text, predicates):
     """Creates a list of elements from LISP formula."""
 
-    text=f.read()
+    # skip lines with user-defined predicates
+    lines = file_text.split('\n')
+    new_text=""
+    for line in lines:
+        if not(len(line)!=0 and line[0]=='#'):
+            new_text+=line
 
     formula=[]
     element=""
     left=0  # number of parentheses
     right=0
-    for c in text:
+    for c in new_text:
         # parentheses
         if c=='(' or c==')':
             if element!="":
@@ -39,10 +119,10 @@ def parse(f):
     if left!=right:
         raise SyntaxError("Invalid form of input formula (parentheses not matching).")
     
-    return create_automaton(formula)    
+    return create_automaton(formula, predicates)    
 
 
-def create_automaton(formula):
+def create_automaton(formula, predicates):
     """Creates Buchi automaton from LISP formula in file f."""
     
     stack=[]
@@ -58,10 +138,19 @@ def create_automaton(formula):
                 atom.append(stack.pop())
             atom.append(stack.pop())
             atom.reverse()
+            error=False
+
+            # user-defined predicates
+            if atom[1] in predicates.keys():
+                tmp=predicates[atom[1]][1]  # predicate definition
+                i=2
+                for var in predicates[atom[1]][0]:
+                    tmp = tmp.replace(var, atom[i]) # replace formal arguments with actual arguments
+                    i+=1
+                a=parse(tmp, predicates) # create automaton for predicate
 
             # operations with automata
-            error=False
-            if atom[1]=="exists":
+            elif atom[1]=="exists":
                 if not (isinstance(atom[3], Automaton)):
                     error=True
                 else:
@@ -85,7 +174,8 @@ def create_automaton(formula):
                 if not (isinstance(atom[2], Automaton)):
                     error=True
                 else:
-                    a=complement(atom[2])
+                    #a=complement(atom[2])
+                    a=comp(atom[2])
             elif atom[1]=="implies":
                 if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
@@ -101,6 +191,7 @@ def create_automaton(formula):
                 a=sub(atom[2],atom[3])
             elif atom[1]=="succ":
                 a=succ(atom[2],atom[3])
+            
             else:
                 if (not first) or len(atom)!=4:
                     raise SyntaxError('Invalid form of input formula near "{}".'.format(' '.join(map(str,atom))))

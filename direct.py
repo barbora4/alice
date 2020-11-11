@@ -130,7 +130,6 @@ def reduction(a):
                     change=True
                     merge(a, d[0], d[1])
                     skip=True
-                    print("ahoj")
                     break
 
             if not skip:
