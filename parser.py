@@ -6,6 +6,7 @@ from union import *
 from atomic_automata import *
 from complement import *
 from comp import *
+from comp2 import *
 
 def analyse_predicates(file_text):
     """Analyses user-defined predicates."""
@@ -159,7 +160,8 @@ def create_automaton(formula, predicates):
                 if not (isinstance(atom[3], Automaton)):
                     error=True
                 else:
-                    a=complement(exists(atom[2], complement(atom[3])))
+                    #a=complement(exists(atom[2], complement(atom[3])))
+                    a=comp2(exists(atom[2], comp2(atom[3])))
             elif atom[1]=="and":
                 if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
@@ -175,12 +177,14 @@ def create_automaton(formula, predicates):
                     error=True
                 else:
                     #a=complement(atom[2])
-                    a=comp(atom[2])
+                    #a=comp(atom[2])
+                    a=comp2(atom[2])
             elif atom[1]=="implies":
                 if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
                 else:
-                    a=union(complement(atom[2]), atom[3])
+                    #a=union(complement(atom[2]), atom[3])
+                    a=union(comp2(atom[2]), atom[3])
 
             # atomic automata
             elif atom[1]=="zeroin":

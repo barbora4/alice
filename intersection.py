@@ -78,8 +78,7 @@ def intersection(a1,a2):
                 accept.add(s)
 
     a=Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
-
-    a=find_and_change_cycles(a)
+    
     optimize(a)
 
     return a

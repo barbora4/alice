@@ -43,8 +43,9 @@ def direct_simulation(a):
     for c in a.alphabet:
         for x in a.states:
             for y in a.states:
-                if card[c][y]==0 and card[c][x]!=0:
+                if card[c][y]==0 and card[c][x]!=0 and x!=y:
                     w.add((x,y))
+                    queue.append((x,y)) ###!!!
 
     while len(queue)!=0:
         new = queue.pop(0)    # dequeue
@@ -58,14 +59,14 @@ def direct_simulation(a):
                                 if (t2[0], t[0]) not in w:
                                     w.add((t2[0], t[0])) 
                                     queue.append((t2[0],t[0])) 
-    
+
     all_combinations = set(product(a.states, a.states))
     direct = all_combinations - w   # direct simulation
     return direct
 
 def merge(a, q0, q1):
     """Merges two states in automaton a."""
-
+    
     # merge these two states and update preorder
     # add new state
     a.states.add("new")
@@ -131,11 +132,11 @@ def reduction(a):
                     merge(a, d[0], d[1])
                     skip=True
                     break
-
+         
             if not skip:
                 for d in direct:
                     if d in left and d[0]!=d[1]:
                         change=True
                         merge(a, d[0], d[1])
                         break
-                
+             
