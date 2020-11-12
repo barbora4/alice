@@ -35,25 +35,6 @@ Use syntax similar to syntax for macros in C
 
 Formula:
 ```
-(exists U
-  (neg
-    (implies 
-      (forall V (implies (succ (V U)) (sub (V Z))))
-      (sub (U Z))
-)))
-```
-Image:
-
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1.png" width=400>
-
-| Reduced states | States after reduction|
-| --- | --- |
-| 10 | 7 |
-
----
-
-Formula:
-```
 (and (neg (zeroin X)) (neg (succ (X Y))))
 ```
 Image:
@@ -83,3 +64,22 @@ Image:
 | Reduced states | States after reduction|
 | --- | --- |
 | 4 | 6 |
+
+---
+
+Formula:
+```
+(exists U
+  (neg
+    (implies 
+      (forall V (implies (succ (V U)) (sub (V Z))))
+      (sub (U Z))
+)))
+```
+Image:
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1.png" width=400>
+
+| Reduced states | States after reduction|
+| --- | --- |
+| 10 | 7 |
