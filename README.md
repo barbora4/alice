@@ -30,3 +30,56 @@ Use syntax similar to syntax for macros in C
 
 (not_sub (Y Z))
 ```
+
+## Statistics
+
+Formula:
+```
+(exists U
+  (neg
+    (implies 
+      (forall V (implies (succ (V U)) (sub (V Z))))
+      (sub (U Z))
+)))
+```
+Image:
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1.png" width=400>
+
+| Reduced states | States after reduction|
+| --- | --- |
+| 10 | 7 |
+
+---
+
+Formula:
+```
+(and (neg (zeroin X)) (neg (succ (X Y))))
+```
+Image:
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph2.png" width=400>
+
+| Reduced states | States after reduction|
+| --- | --- |
+| 3 | 7 |
+
+---
+
+Formula:
+```
+(or
+  (implies
+    (neg
+      (or
+        (neg (and (sing X) (zeroin X)))
+        (succ (X Y))
+))))
+```
+Image:
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph3.png" width=400>
+
+| Reduced states | States after reduction|
+| --- | --- |
+| 4 | 6 |
