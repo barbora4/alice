@@ -30,12 +30,16 @@ def add_to_transitions(a1,alphabet1,alphabet2):
                 old_alphabet.add("{}|{}:1".format(b,a))
                 old_alphabet.remove(b)
             # add to all transitions
-            for i in range(len(a1.transitions)):
+            for i in range(len(copy(a1.transitions))):
                 if a1.transitions[i][1] != "":
-                    a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
+                    #a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
+                    a1.transitions.append([a1.transitions[i][0], "{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'1')), a1.transitions[i][2]])
+                    a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'0'))
                 else:
-                    a1.transitions[i][1]="{}".format("{}:{}".format(a, '?'))
-
+                    #a1.transitions[i][1]="{}".format("{}:{}".format(a, '?'))
+                    a1.transitions.append([a1.transitions[i][0], "{}".format("{}:{}".format(a, '1')), a1.transitions[i][2]])
+                    a1.transitions[i][1]="{}".format("{}:{}".format(a, '0'))
+    
     a1.alphabet=copy(old_alphabet)
 
 def alphabetical_order(a):
@@ -130,11 +134,12 @@ def exists(X,a):
             i[1]=""
 
     # remove duplicate transitions
+    tran=list()
     for t in transitions:
-        if transitions.count(t)>1:
-            transitions.remove(t)
+        if t not in tran:
+            tran.append(t)
 
-    b=Automaton(a.states,alphabet,transitions,a.start,a.accept)
+    b=Automaton(a.states,alphabet,tran,a.start,a.accept)
     
     # empty alphabet
     if len(alphabet)==0:
@@ -146,9 +151,9 @@ def exists(X,a):
             # false
             return false()
 
-    remove_unreachable_parts(b)
-    edit_names(b)
-    edit_transitions(b)
+    #remove_unreachable_parts(b)
+    #edit_names(b)
+    #edit_transitions(b)
     optimize(b)
     return b
 
@@ -171,6 +176,8 @@ def sub(X,Y):
     for s in start:
         # if an element is in X, it must be also in Y
         transitions.append([s,"{}:0|{}:?".format(X,Y),s])
+        #transitions.append([s,"{}:0|{}:0".format(X,Y),s])
+        #transitions.append([s,"{}:0|{}:1".format(X,Y),s])
         transitions.append([s,"{}:1|{}:1".format(X,Y),s])
 
     return Automaton(states,alphabet,transitions,start,accept)
@@ -212,7 +219,9 @@ def zeroin(X):
     # first input must be X:1
     transitions.append(["0","{}:1".format(X),"1"])
     transitions.append(["1","{}:?".format(X),"1"])
-
+    #transitions.append(["1","{}:0".format(X),"1"])
+    #transitions.append(["1","{}:1".format(X),"1"])
+    
     states=start|accept
 
     return Automaton(states,set(alphabet),transitions,start,accept)

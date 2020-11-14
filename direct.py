@@ -116,9 +116,13 @@ def reduction(a):
             if (d[1],d[0]) in direct and d[0]!=d[1]:
                 change=True
                 merge(a, d[0], d[1])
+                disconnect_little_brothers(a,direct)
                 skip=True
                 break
-        
+
+
+        #TODO: does it work for Buchi automata???
+        """
         if not skip:
             # reversed automaton
             b=Automaton(copy(a.states), copy(a.alphabet), list(), copy(a.accept), copy(a.start))
@@ -139,4 +143,49 @@ def reduction(a):
                         change=True
                         merge(a, d[0], d[1])
                         break
-             
+        """
+
+
+def disconnect_little_brothers(a, direct):
+    """Disconnects little brother states."""
+
+    change=True
+    while change:
+        change=False
+        skip=False
+        if not skip:
+            for q in a.states:
+                if not skip:
+                    for i in range(len(a.transitions)):
+                        if not skip:
+                            if a.transitions[i][0]==q:
+                                for t2 in a.transitions:    
+                                    if (a.transitions[i]!=t2 and t2[0]==q and input_equal(a.transitions[i][1],t2[1]) and t2[2]!=a.transitions[i][2] and (a.transitions[i][2],t2[2]) in direct and (t2[2],a.transitions[i][2]) not in direct):
+                                        # a.transitions[i][2] is a little brother of t2[2]
+                                        change=True
+                                        
+                                        # all transitions in a.transitions[i]
+                                        transitions1=[copy(a.transitions[i][1])]
+                                        while any("?" in t for t in transitions1):
+                                            for j in range(len(transitions1)):
+                                                if "?" in transitions1[j]:
+                                                    transitions1.append(transitions1[j].replace('?','0', 1))
+                                                    transitions1.append(transitions1[j].replace('?','1', 1))
+                                                    transitions1.remove(transitions1[j])
+                                        
+                                        new=list()
+                                        for j in range(len(transitions1)):
+                                            if not input_equal(transitions1[j],t2[1]):
+                                                # which transitions should be left
+                                                new.append(transitions1[j])
+
+                                        print(">Removing transition: {}".format(a.transitions[i]))
+                                        print()
+
+                                        for n in new:
+                                            a.transitions.append([a.transitions[i][0], n, a.transitions[i][2]])
+                                        a.transitions.remove(a.transitions[i])
+                                        
+                                        skip=True
+                                        break
+

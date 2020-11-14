@@ -241,5 +241,6 @@ def optimize(a):
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
     reduction(a)
-    accept_all(a)
+    a=remove_unreachable_parts(a)
+    #accept_all(a)
     edit_names(a)

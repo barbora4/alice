@@ -181,7 +181,6 @@ def edit_transitions(a):
 
         a.transitions=copy(transitions2)
 
-
 def input_equal(a,t):
     """Returns True if inputs a and t are equal."""
     

@@ -55,7 +55,11 @@ Formula:
       (or
         (neg (and (sing X) (zeroin X)))
         (succ (X Y))
-))))
+    ))
+    (sub (X Y))
+  )
+  (and (succ (X Y)) (zeroin Y))
+)
 ```
 Image:
 
