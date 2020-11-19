@@ -41,9 +41,10 @@ Image:
 
 <img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph2.png" width=400>
 
-| Reduced states | States after reduction|
+| | |
 | --- | --- |
-| 3 | 7 |
+| Direct simulation | -3 states |
+| Disconnecting little brothers | no change |
 
 ---
 
@@ -65,9 +66,10 @@ Image:
 
 <img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph3.png" width=400>
 
-| Reduced states | States after reduction|
+| | |
 | --- | --- |
-| 4 | 6 |
+| Direct simulation | -3 states |
+| Disconnecting little brothers | no change |
 
 ---
 
@@ -84,6 +86,36 @@ Image:
 
 <img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1.png" width=400>
 
-| Reduced states | States after reduction|
+| | |
 | --- | --- |
-| 10 | 7 |
+| Direct simulation | -11 states |
+| Disconnecting little brothers | -11 transitions |
+
+---
+
+Formula:
+```
+(or
+  (exists U
+    (and
+      (neg
+        (exists V
+          (and (succ (V U)) (neg (sub (V Z))))
+        )
+      )
+      (neg
+        (sub (U Z))
+      )
+    )
+  )
+  (neg (sub (Y Z)))
+)
+```
+Image:
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph4.png" width=400>
+
+| | |
+| --- | --- |
+| Direct simulation | -8 states |
+| Disconnecting little brothers | -3 transitions |
