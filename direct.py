@@ -67,6 +67,8 @@ def direct_simulation(a):
 def merge(a, q0, q1):
     """Merges two states in automaton a."""
     
+    print(">Merging")
+
     # merge these two states and update preorder
     # add new state
     a.states.add("new")
@@ -178,8 +180,9 @@ def disconnect_little_brothers(a, direct):
                                             if not input_equal(transitions1[j],t2[1]):
                                                 # which transitions should be left
                                                 new.append(transitions1[j])
+                                            else:
+                                                print(">Removing transition: [{},{},{}]".format(a.transitions[i][0], transitions1[j], a.transitions[i][2]))
 
-                                        print(">Removing transition: {}".format(a.transitions[i]))
                                         print()
 
                                         for n in new:
