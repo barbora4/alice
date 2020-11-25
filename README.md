@@ -84,7 +84,7 @@ Formula:
 ```
 Image:
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1.png" width=400>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1_02.png" width=400>
 
 | | |
 | --- | --- |
@@ -119,3 +119,4 @@ Image:
 | --- | --- |
 | Direct simulation | -8 states |
 | Disconnecting little brothers | -3 transitions |
+
