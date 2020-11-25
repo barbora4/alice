@@ -22,7 +22,8 @@ def intersection(a1,a2):
     nfa=all(q in a1.accept for q in a1.states) or all(q in a2.accept for q in a2.states)
 
     # algorithm for intersection of 2 Buchi automata
-    for q in W:
+    while (len(W)!=0):
+        q=W.pop()
         Q.add(q)
         if q[0] in a1.accept and q[2]=='1':
             F.add(q)
@@ -69,7 +70,7 @@ def intersection(a1,a2):
 
     # creating set of accepting states
     accept=set()
-    for s in W:
+    for s in Q:
         if nfa:
             if s[0] in a1.accept and s[1] in a2.accept:
                 accept.add(s)
@@ -77,8 +78,9 @@ def intersection(a1,a2):
             if s[0] in a1.accept and s[2]=='1':
                 accept.add(s)
 
-    a=Automaton(W,a1.alphabet|a2.alphabet,transitions,start,accept)
+    a=Automaton(Q,a1.alphabet|a2.alphabet,transitions,start,accept)
     
+    a=find_and_change_cycles(a)
     optimize(a)
 
     return a

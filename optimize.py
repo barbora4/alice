@@ -236,11 +236,20 @@ def accept_all(a):
 def optimize(a):
     """Reduces double cycles and removes useless strongly connected components."""
 
+    count = len(a.states)
+
     edit_names(a)
     edit_transitions(a)
     a=remove_unreachable_parts(a)
     remove_useless_scc(a)
+    
+    print("> Tarjan: {}".format(count-len(a.states)))
+    count = len(a.states)
+    
     reduction(a)
     a=remove_unreachable_parts(a)
     #accept_all(a)
     edit_names(a)
+
+    print("> Direct simulation: {}\n".format(count-len(a.states)))
+    count = len(a.states)

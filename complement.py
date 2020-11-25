@@ -43,7 +43,9 @@ def one_start_state(b):
             tran.append(t)
     b.transitions = copy(tran)
 
-    optimize(b)
+    edit_names(b)
+    edit_transitions(b)
+    #optimize(b)
 
 
 def complement(a):
@@ -56,7 +58,8 @@ def complement(a):
 
     # level ranking is a function g: a.states -> {0,...,2*|a.states|}U{-1}
     # -1 indicates that the state is not present in the level of the run DAG
-    maxRanking = 2*len(a.states)
+    #maxRanking = 2*len(a.states)
+    maxRanking = 2*len(a.states-a.accept)
     
     # level ranking
     all_combinations=list(itertools.product(set(range(maxRanking+1))|{-1}, repeat=len(a.states)))

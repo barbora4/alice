@@ -67,7 +67,7 @@ def direct_simulation(a):
 def merge(a, q0, q1):
     """Merges two states in automaton a."""
     
-    print(">Merging")
+    #print(">Merging")
 
     # merge these two states and update preorder
     # add new state
@@ -138,7 +138,7 @@ def reduction(a):
                     merge(a, d[0], d[1])
                     skip=True
                     break
-         
+            
             if not skip:
                 for d in direct:
                     if d in left and d[0]!=d[1]:
@@ -151,6 +151,7 @@ def reduction(a):
 def disconnect_little_brothers(a, direct):
     """Disconnects little brother states."""
 
+    count = 0
     change=True
     while change:
         change=False
@@ -159,6 +160,7 @@ def disconnect_little_brothers(a, direct):
             for q in a.states:
                 if not skip:
                     for i in range(len(a.transitions)):
+                        count=0
                         if not skip:
                             if a.transitions[i][0]==q:
                                 for t2 in a.transitions:    
@@ -181,14 +183,15 @@ def disconnect_little_brothers(a, direct):
                                                 # which transitions should be left
                                                 new.append(transitions1[j])
                                             else:
-                                                print(">Removing transition: [{},{},{}]".format(a.transitions[i][0], transitions1[j], a.transitions[i][2]))
-
-                                        print()
-
+                                                count+=1
+                                                #print(">Removing transition: [{},{},{}]".format(a.transitions[i][0], transitions1[j], a.transitions[i][2]))
+                                        
                                         for n in new:
                                             a.transitions.append([a.transitions[i][0], n, a.transitions[i][2]])
                                         a.transitions.remove(a.transitions[i])
                                         
+                                        print(">Little brothers: {} transitions".format(count))
+
                                         skip=True
                                         break
 

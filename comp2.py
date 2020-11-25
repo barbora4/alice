@@ -15,7 +15,8 @@ def comp2(a):
 
     # level ranking is a function g: a.states -> {0,...,2*|a.states|}U{-1}
     # -1 indicates that the state is not present in the level of the run DAG
-    maxRanking = 2*len(a.states)
+    #maxRanking = 2*len(a.states)
+    maxRanking = 2*(len(a.states)-len(a.accept))
     
     # level ranking
     all_combinations=list(itertools.product(set(range(maxRanking+1))|{-1}, repeat=len(a.states)))

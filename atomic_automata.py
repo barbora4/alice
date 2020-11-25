@@ -84,7 +84,7 @@ def cylindrification(a1,a2):
     alphabetical_order(a2)
 
 
-def  true():
+def true():
     """Returns automaton for true formula."""
 
     return Automaton(set("0"), set(), [["0", "", "0"]], set("0"), set("0"))
