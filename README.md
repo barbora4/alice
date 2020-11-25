@@ -33,47 +33,7 @@ Use syntax similar to syntax for macros in C
 
 ## Statistics
 
-Formula:
-```
-(and (neg (zeroin X)) (neg (succ (X Y))))
-```
-Image:
-
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph2.png" width=400>
-
-| | |
-| --- | --- |
-| Direct simulation | -3 states |
-| Disconnecting little brothers | no change |
-
----
-
-Formula:
-```
-(or
-  (implies
-    (neg
-      (or
-        (neg (and (sing X) (zeroin X)))
-        (succ (X Y))
-    ))
-    (sub (X Y))
-  )
-  (and (succ (X Y)) (zeroin Y))
-)
-```
-Image:
-
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph3.png" width=400>
-
-| | |
-| --- | --- |
-| Direct simulation | -3 states |
-| Disconnecting little brothers | no change |
-
----
-
-Formula:
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/formula1">Formula:</a>
 ```
 (exists U
   (neg
@@ -82,18 +42,21 @@ Formula:
       (sub (U Z))
 )))
 ```
-Image:
+
+| Formula | Remove useless SCC | Direct simulation | Little brothers |
+| --- | --- | --- | --- |
+| A: (implies (succ (V U)) (sub (V Z))) | -1 state | -1 state | - |
+| B: (forall V A) | -5 states | -4 states | -8 transitions |
+| C: (implies B (sub (U Z))) | -1 state | -2 states | - |
+| D: (neg C) | -2 states | - | - |
+| E: (exists U D) | -1 state | - | - |
+| Total | -10 states | -7 states | -8 transitions |
 
 <img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph1_02.png" width=400>
 
-| | |
-| --- | --- |
-| Direct simulation | -11 states |
-| Disconnecting little brothers | -11 transitions |
-
 ---
 
-Formula:
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/formula2">Formula:</a>
 ```
 (or
   (exists U
@@ -111,12 +74,20 @@ Formula:
   (neg (sub (Y Z)))
 )
 ```
-Image:
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph4.png" width=400>
+| Formula | Remove useless SCC | Direct simulation | Little brothers |
+| --- | --- | --- | --- |
+| A: (neg (sub (V Z))) | - | -1 state | - |
+| B: (and (succ (V U)) A) | - | -1 state | - |
+| C: (exists V B) | - | -1 state | - |
+| D: (neg C) | -1 state | - | - |
+| E: (neg (sub (U Z))) | - | -1 state | - |
+| F: (and D E) | - | -1 state | - |
+| G: (exists U F) | - | - | - |
+| H: (neg (sub (Y Z))) | - | -1 state | - |
+| I: (or G H) | -1 state | - | - |
+| Total | -2 states | -6 states | - |
 
-| | |
-| --- | --- |
-| Direct simulation | -8 states |
-| Disconnecting little brothers | -3 transitions |
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph5.png" width=400>
+
 
