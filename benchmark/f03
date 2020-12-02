@@ -1,0 +1,14 @@
+(forall U
+  (and
+  (implies
+    (and (sing U) (sub U X))
+    (exists Z (and
+      (sing Z)
+      (and
+        (< U Z) (sub Z Y)
+      )
+    ))
+  )
+  (sing U)
+  )
+)

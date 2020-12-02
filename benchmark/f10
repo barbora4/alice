@@ -1,0 +1,7 @@
+(forall U (and
+  (sing U)
+  (exists V (and
+    (sing V)
+    (and (< U V) (sub V X))
+  ))
+))

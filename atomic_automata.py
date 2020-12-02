@@ -180,8 +180,10 @@ def sub(X,Y):
         #transitions.append([s,"{}:0|{}:1".format(X,Y),s])
         transitions.append([s,"{}:1|{}:1".format(X,Y),s])
 
-    return Automaton(states,alphabet,transitions,start,accept)
+    a = Automaton(states,alphabet,transitions,start,accept)
+    alphabetical_order(a)
 
+    return a
 
 def succ(Y,X):
     """Constructs atomic automaton for formula: Y is a successor of X."""
@@ -226,6 +228,53 @@ def zeroin(X):
 
     return Automaton(states,set(alphabet),transitions,start,accept)
 
+def is_in(X, Y):
+    "x is in Y"
+
+    if isinstance(X, str):
+        start={"0"}
+        accept={"1"}
+        
+        alphabet_X={"{}:0".format(X), "{}:1".format(X)}
+        alphabet_Y={"{}:0".format(Y), "{}:1".format(Y)}
+        alphabet=set()
+        for a in alphabet_X:
+            for b in alphabet_Y:
+                alphabet.add("{}|{}".format(a,b))
+
+        transitions=list()
+        transitions.append(["0","{}:0|{}:?".format(X,Y),"0"])
+        transitions.append(["0","{}:1|{}:1".format(X,Y),"1"])
+        transitions.append(["1","{}:0|{}:?".format(X,Y),"1"])
+        
+        states=start|accept
+        
+        a=Automaton(states,alphabet,transitions,start,accept)
+        alphabetical_order(a)
+
+        return a
+    
+    else:
+        alphabet = set()
+        for c in X.alphabet:
+            alphabet.add(c+"|{}:0".format(Y))
+            alphabet.add(c+"|{}:1".format(Y))
+
+        transitions=list()
+        for t in X.transitions:
+            if t[1][2] == "1":
+                new = t[1]+"|{}:1".format(Y)
+                transitions.append([t[0], new, t[2]])
+            elif t[1][2] == "0":
+                new = t[1]+"|{}:?".format(Y)
+                transitions.append([t[0], new, t[2]])
+
+        a=Automaton(X.states, alphabet, transitions, X.start, X.accept)
+        alphabetical_order(a)
+
+        return a
+
+
 def sing(X):
     """X is a singleton."""
 
@@ -240,3 +289,26 @@ def sing(X):
     transitions.append(["1", "{}:0".format(X), "1"])
 
     return Automaton(states, set(alphabet), transitions, start, accept)
+
+def less(X, Y):
+    start={"0"}
+    accept={"2"}
+    states={"0", "1", "2"}
+
+    alphabet=set()
+    alphabet.add("{}:0|{}:0".format(X,Y))
+    alphabet.add("{}:0|{}:1".format(X,Y))
+    alphabet.add("{}:1|{}:0".format(X,Y))
+    alphabet.add("{}:1|{}:1".format(X,Y))
+
+    transitions=list()
+    transitions.append(["0", "{}:0|{}:0".format(X,Y), "0"])
+    transitions.append(["0", "{}:1|{}:0".format(X,Y), "1"])
+    transitions.append(["1", "{}:0|{}:0".format(X,Y), "1"])
+    transitions.append(["1", "{}:0|{}:1".format(X,Y), "2"])
+    transitions.append(["2", "{}:0|{}:0".format(X,Y), "2"])
+
+    a = Automaton(states, alphabet, transitions, start, accept)
+    alphabetical_order(a)
+
+    return a

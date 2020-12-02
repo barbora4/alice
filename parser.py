@@ -7,6 +7,8 @@ from atomic_automata import *
 from complement import *
 from comp import *
 from comp2 import *
+from binarytree import *
+from tree import *
 
 def analyse_predicates(file_text):
     """Analyses user-defined predicates."""
@@ -120,9 +122,11 @@ def parse(file_text, predicates):
     if left!=right:
         raise SyntaxError("Invalid form of input formula (parentheses not matching).")
     
-    return create_automaton(formula, predicates)    
 
-
+    create_tree(formula, predicates)
+    #return create_automaton(formula, predicates)   
+    
+    
 def create_automaton(formula, predicates):
     """Creates Buchi automaton from LISP formula in file f."""
     

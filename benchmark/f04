@@ -1,0 +1,6 @@
+#define (after X Y) (forall A (implies (and (sing A) (sub A X)) (exists B (and (and (sing A) (sing B)) (and (< A B) (sub B Y))))))
+
+(and
+  (after X Y)
+  (after Y X)
+)

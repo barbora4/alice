@@ -1,0 +1,6 @@
+(forall Z
+(or
+  (and (sing Z) (neg (< X Z)))
+  (and (sing Y) (neg (< Z Y)))
+)
+)

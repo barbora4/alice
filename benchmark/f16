@@ -1,0 +1,10 @@
+(exists U
+  (and
+    (and (sing U) (sub U X))
+    (neg
+      (exists V 
+        (< V U)
+      )
+    )
+  )
+)

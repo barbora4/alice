@@ -1,0 +1,6 @@
+#define (suc2 X Y) (exists A (and (and (sing X) (and (sing Y) (sing A))) (and (succ A X) (succ Y A))))
+#define (suc4 X Y) (exists B (and (exists A (and (and (sing X) (and (sing B) (sing A))) (and (succ A X) (succ B A)))) (exists A (and (and (sing B) (and (sing Y) (sing A))) (and (succ A B) (succ Y A))))))
+
+(exists Z
+  (and (suc4 X Z) (suc4 Z Y))
+)

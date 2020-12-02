@@ -248,7 +248,6 @@ def optimize(a):
     
     reduction(a)
     a=remove_unreachable_parts(a)
-    #accept_all(a)
     edit_names(a)
 
     print("> Direct simulation: {}\n".format(count-len(a.states)))

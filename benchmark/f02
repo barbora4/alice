@@ -1,0 +1,9 @@
+(neg (exists X 
+  (and
+    (sing X)
+    (or
+      (and (sub X Z) (neg (sub X Y)))
+      (and (sub X Y) (neg (sub X Z)))
+    )
+  )
+))
