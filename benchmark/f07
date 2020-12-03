@@ -1,0 +1,7 @@
+#define (suc X Y) (and (and (sing X) (sing Y)) (succ X Y))
+
+(exists Z
+  (and
+    (suc Z X) (suc Y Z)
+  )
+)

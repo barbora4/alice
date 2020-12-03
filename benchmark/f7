@@ -1,6 +1,0 @@
-(exists Z
-  (and
-    (and (sing X) (and (sing Y) (sing Z)))
-    (and (succ Z X) (succ Y Z))
-  )
-)

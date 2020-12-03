@@ -24,7 +24,6 @@ def comp2(a):
         else:
             all_combinations.append(list(range(maxRanking+1))[::2])
     all_combinations = list(product(*all_combinations))
-    print(len(all_combinations))
     R=list()
     for i in range(len(all_combinations)):
         dictionary={}
@@ -33,7 +32,6 @@ def comp2(a):
             dictionary[state]=all_combinations[i][j]
             j+=1
         R.append(dictionary)
-    print(len(R))
 
     """
     # level ranking
@@ -68,7 +66,6 @@ def comp2(a):
     transitions=list()
     i=0
     while i < len(states):
-        print(len(states))
         for c in a.alphabet:
             reachable_states = set()
                      

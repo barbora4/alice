@@ -205,7 +205,6 @@ def tree_from_formula(formula, start, end, predicates):
             new = new[1:]
         while new[0][-1]==")":
             new = new[:-1]
-        print(new)
         root = tree_from_formula(new, 0, len(new)-1, predicates)
     else:
         root = newNode(formula[start]) # new node
@@ -277,16 +276,12 @@ def create_aut(node):
         a=exists(node.data[-1], create_aut(node.left))
     elif node.data.find("forall")!=-1:
         a=comp2(exists(node.data[-1], comp2(create_aut(node.left))))
-        print("forall")
     elif node.data == "neg":
         a=comp2(create_aut(node.left))
-        print("neg")
     elif node.data == "and":
         a=intersection(create_aut(node.left), create_aut(node.right))
-        print("and")
     elif node.data == "or":
         a=union(create_aut(node.left), create_aut(node.right))
-        print("or")
     elif node.data == "implies":
         a=union(comp2(create_aut(node.left)), create_aut(node.right))
     elif node.data.find("sub")!=-1:

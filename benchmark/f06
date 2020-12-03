@@ -1,6 +1,1 @@
-(forall Z
-(or
-  (and (sing Z) (neg (< X Z)))
-  (and (sing Y) (neg (< Z Y)))
-)
-)
+(and (and (sing X) (sing Y)) (succ X Y))

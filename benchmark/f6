@@ -1,4 +1,0 @@
-(and
-  (and (sing X) (and (sing Y) (sing Z)))
-  (or (neg (< X Z)) (neg (< Z Y)))
-)
