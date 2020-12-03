@@ -43,6 +43,8 @@ Use syntax similar to syntax for macros in C
   )
 )
 ```
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01_tree.png" width=300></img>
 
 | Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
 | --- | --- | --- | --- | --- | --- |
@@ -52,8 +54,6 @@ Use syntax similar to syntax for macros in C
 | D: (and (sub X Y) C) | 3 | - | -1 state | - | 2 |
 | E: (or B D) | 5 | - | - | - | 5 |
 | F: (and (sing X) E) | 11 | -4 states | -2 states | - | 5 |
-
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01.png" width=400>
 
 ---
 
@@ -69,6 +69,7 @@ Use syntax similar to syntax for macros in C
   )
 ))
 ```
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f02.png" width=400>
 
 | Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
 | --- | --- | --- | --- | --- | --- |
@@ -80,8 +81,6 @@ Use syntax similar to syntax for macros in C
 | F: (and (sing X) E) | 11 | -4 states | -2 states | - | 5 |
 | G: (exists X F) | 5 | - | - | - | 5 |
 | H: (neg G) | 13 | -9 states | -1 state | - | 3 |
-
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f02.png" width=400>
 
 ---
 
