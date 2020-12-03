@@ -2,6 +2,6 @@
 
 (exists Z
   (and
-    (suc Z X) (suc Y Z)
+    (suc X Z) (suc Z Y)
   )
 )
