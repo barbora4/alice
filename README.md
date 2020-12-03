@@ -43,8 +43,6 @@ Use syntax similar to syntax for macros in C
   )
 )
 ```
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01.png" width=400></img>
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01_tree.png" width=300></img>
 
 | Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
 | --- | --- | --- | --- | --- | --- |
@@ -54,6 +52,9 @@ Use syntax similar to syntax for macros in C
 | D: (and (sub X Y) C) | 3 | - | -1 state | - | 2 |
 | E: (or B D) | 5 | - | - | - | 5 |
 | F: (and (sing X) E) | 11 | -4 states | -2 states | - | 5 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01_tree.png" width=300></img>
 
 ---
 
@@ -69,7 +70,6 @@ Use syntax similar to syntax for macros in C
   )
 ))
 ```
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f02.png" width=400>
 
 | Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
 | --- | --- | --- | --- | --- | --- |
@@ -81,6 +81,9 @@ Use syntax similar to syntax for macros in C
 | F: (and (sing X) E) | 11 | -4 states | -2 states | - | 5 |
 | G: (exists X F) | 5 | - | - | - | 5 |
 | H: (neg G) | 13 | -9 states | -1 state | - | 3 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f02.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f02_tree.png" width=300></img>
 
 ---
 
@@ -103,7 +106,8 @@ Use syntax similar to syntax for macros in C
 | D: (and (sing I) (sub J U)) | 2 | - | - | - | 2 |
 | E: (implies D C) | 10 | -2 states | - | - | 8 |
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f22.png" width=400>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f22.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f22_tree.png" width=300></img>
 
 ---
 
@@ -121,7 +125,8 @@ Use syntax similar to syntax for macros in C
 | B: (and A (succ X Y)) | 4 | - | - | - | 4 |
 
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f06.png" width=400>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f06.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f06_tree.png" width=300></img>
 
 ---
 
@@ -141,7 +146,8 @@ Use syntax similar to syntax for macros in C
 | A: (and (suc Z X) (suc Y Z)) | 5 | - | - | - | 5 |
 | B: (exists Z A) | 5 | - | - | - | 5 |
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f07.png" width=400>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f07.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f07_tree.png" width=300></img>
 
 ---
 
@@ -161,7 +167,8 @@ Use syntax similar to syntax for macros in C
 | A: (and (suc2 X Z) (suc2 Z Y)) | 15 | - | -5 states | - | 10 |
 | B: (exists Z A) | 10 | - | - | - | 10 |
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f08.png" width=400>mm
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f08.png" width=500></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f08_tree.png" width=500></img>
 
 ---
 
@@ -179,7 +186,8 @@ Use syntax similar to syntax for macros in C
 | A: (and (suc4 X Z) (suc4 Z Y)) | 28 | - | -10 states | - | 18 |
 | B: (exists Z A) | 18 | - | - | - | 18 |
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f09.png" width=400>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f09.png" width=800>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f09_tree.png" width=800>
 
 ---
 
@@ -203,7 +211,8 @@ Use syntax similar to syntax for macros in C
 | D: (and A C) | 16 | -12 states | -1 state | - | 3 |
 | E: (exists U D) | 3 | - | - | - | 3 |
 
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16.png" width=400>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16_tree.png" width=400></img>
 
 ---
 
