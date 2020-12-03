@@ -212,7 +212,7 @@ Use syntax similar to syntax for macros in C
 | E: (exists U D) | 3 | - | - | - | 3 |
 
 <img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16.png" width=400></img>
-<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16_tree.png" width=400></img>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16_tree.png" width=300></img>
 
 ---
 
