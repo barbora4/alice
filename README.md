@@ -33,6 +33,181 @@ Use syntax similar to syntax for macros in C
 
 ## Statistics
 
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f01">Formula:</a>
+```
+(and
+  (sing X)
+  (or
+    (and (sub X Z) (neg (sub X Y)))
+    (and (sub X Y) (neg (sub X Z)))
+  )
+)
+```
+
+| Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (neg (sub X Y)) | 4 | - | -1 state | - | 3 |
+| B: (and (sub X Z) A) | 3 | - | -1 state | - | 2 |
+| C: (neg (sub X Z)) | 4 | - | -1 state | - | 3 |
+| D: (and (sub X Y) C) | 3 | - | -1 state | - | 2 |
+| E: (or B D) | 5 | - | - | - | 5 |
+| F: (and (sing X) E) | 11 | -4 states | -2 states | - | 5 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01.png" width=400>
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f02">Formula:</a>
+```
+(neg (exists X
+  (and
+    (sing X)
+    (or
+      (and (sub X Z) (neg (sub X Y)))
+      (and (sub X Y) (neg (sub X Z)))
+    )
+  )
+))
+```
+
+| Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (neg (sub X Y)) | 4 | - | -1 state | - | 3 |
+| B: (and (sub X Z) A) | 3 | - | -1 state | - | 2 |
+| C: (neg (sub X Z)) | 4 | - | -1 state | - | 3 |
+| D: (and (sub X Y) C) | 3 | - | -1 state | - | 2 |
+| E: (or B D) | 5 | - | - | - | 5 |
+| F: (and (sing X) E) | 11 | -4 states | -2 states | - | 5 |
+| G: (exists X F) | 5 | - | - | - | 5 |
+| H: (neg G) | 13 | -9 states | -1 state | - | 3 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f02.png" width=400>
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f22">Formula:</a>
+```
+(implies
+  (and (sing J) (sub J U))
+  (or
+    (and (sing I) (sub I V))
+    (and (sing I) (sub I W))
+  )
+)
+```
+
+| Formula | States before reduction | Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (and (sing I) (sub I V)) | 2 | - | - | - | 2 |
+| B: (and (sing I) (sub I W)) | 2 | - | - | - | 2 |
+| C: (or A B) | 5 | - | -1 state | - | 4 |
+| D: (and (sing I) (sub J U)) | 2 | - | - | - | 2 |
+| E: (implies D C) | 10 | -2 states | - | - | 8 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f22.png" width=400>
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f06">Formula:</a>
+```
+(and
+  (and (sing X) (sing Y))
+  (succ Y X)
+)
+```
+
+| Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (and (sing X) (sing Y)) | 6 | - | - | - | 6 |
+| B: (and A (succ X Y)) | 4 | - | - | - | 4 |
+
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f06.png" width=400>
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f07">Formula:</a>
+```
+#define (suc X Y) (and (and (sing X) (sing Y)) (succ X Y))
+
+(exists Z
+  (and
+    (suc X Z) (suc Z Y))
+  )
+)
+```
+
+| Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (and (suc Z X) (suc Y Z)) | 5 | - | - | - | 5 |
+| B: (exists Z A) | 5 | - | - | - | 5 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f07.png" width=400>
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f08">Formula:</a>
+```
+#define (suc2 X Y) (exists A (and (and (sing X) (and (sing Y) (sing A))) (and (succ X A) (succ A Y))))
+
+(exists Z
+  (and
+    (suc2 X Z) (suc2 Z Y))
+  )
+)
+```
+
+| Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (and (suc2 X Z) (suc2 Z Y)) | 15 | - | -5 states | - | 10 |
+| B: (exists Z A) | 10 | - | - | - | 10 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f08.png" width=400>mm
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f09">Formula:</a>
+```
+#define (suc4 X Y) (exists B (and (exists A (and (and (sing X) (and (sing B) (sing A))) (and (succ X A) (succ A B)))) (exists A (and (and (sing B) (and (sing Y) (sing A))) (and (succ B A) (succ A Y))))))
+
+(exists Z
+  (and (suc4 X Z) (suc4 Z Y))
+)
+```
+
+| Formula | States before reduction |Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (and (suc4 X Z) (suc4 Z Y)) | 28 | - | -10 states | - | 18 |
+| B: (exists Z A) | 18 | - | - | - | 18 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f09.png" width=400>
+
+---
+
+<a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f16">Formula:</a>
+```
+(exists U
+  (and
+    (and (sing U) (sub U X))
+    (neg
+      (exists V (< V U))
+    )
+  )
+)
+```
+
+| Formula | States before reduction | Remove useless SCC | Direct simulation | Little brothers | States after reduction |
+| --- | --- | --- | --- | --- | --- |
+| A: (and (sing U) (sub U X)) | 2 | - | - | - | 2 |
+| B: (exists V (< V U)) | 3 | - | - | - | 3 |
+| C: (neg B) | 14 | -8 states | -1 state | - | 5 |
+| D: (and A C) | 16 | -12 states | -1 state | - | 3 |
+| E: (exists U D) | 3 | - | - | - | 3 |
+
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f16.png" width=400>
+
+---
+
 <a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/formula1">Formula:</a>
 ```
 (exists U
@@ -89,5 +264,4 @@ Use syntax similar to syntax for macros in C
 | Total | -2 states | -6 states | - |
 
 <img src="https://github.com/barbora4/projektova-praxe/blob/master/images/graph5.png" width=400>
-
 
