@@ -20,10 +20,11 @@ def comp2(a):
     
     all_combinations = list()
     for state in a.states:
-        if state not in a.accept:
-            all_combinations.append(list(range(maxRanking+1)))
-        else:
-            all_combinations.append(list(range(maxRanking+1))) 
+        all_combinations.append(list(range(maxRanking+1)))
+        #if state not in a.accept:
+        #    all_combinations.append(list(range(maxRanking+1)))
+        #else:
+        #    all_combinations.append(list(range(maxRanking+1))) 
             #all_combinations.append(list(range(maxRanking+1))[1::2]) 
     all_combinations = list(product(*all_combinations))
     R=list()
@@ -34,6 +35,7 @@ def comp2(a):
             dictionary[state]=all_combinations[i][j]
             j+=1
         R.append(dictionary)
+
 
     # start states
     start=[copy(a.start)]
@@ -196,6 +198,7 @@ def comp2(a):
                     #####TODO: error! new_state is always the first here!
                     found=False
                     for m in max_function_state:
+                        skip=False
                         new_state = copy(m)
                         # is ranking maximal?
                         #TODO: new_state or m??????? m not used anywhere...
@@ -225,7 +228,7 @@ def comp2(a):
                         if not skip:
                             found = True
                             #new_state = m
-                            #break
+                            break
 
                     if found: ###!!! 
                         if new_state not in states:

@@ -156,7 +156,7 @@ def reduction(a):
 
 
         #TODO: does it work for Buchi automata???
-        
+        """        
         if not skip:
             # reversed automaton
             b=Automaton(copy(a.states), copy(a.alphabet), list(), copy(a.accept), copy(a.start))
@@ -165,12 +165,12 @@ def reduction(a):
             
             left = direct_simulation(b)
             for d in left:
-                if (d[1],d[0]) in left and d[0]!=d[1]:
+                if (d[1],d[0]) in left and d[0]!=d[1] and d[0] not in b.start and d[1] not in b.start and d[0] not in b.accept and d[1] not in b.accept:
                     change=True
                     merge(a, d[0], d[1])
                     skip=True
                     break
-        """  
+           
             if not skip:
                 for d in direct:
                     if d in left and d[0]!=d[1]:
