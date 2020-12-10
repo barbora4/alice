@@ -1,7 +1,12 @@
-(forall U (and
-  (sing U)
+(neg (exists U 
+(and
+(sing U) 
+(neg
   (exists V (and
     (sing V)
     (and (< U V) (sub V X))
   ))
-))
+)
+)
+)
+)

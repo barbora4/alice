@@ -7,7 +7,6 @@ from atomic_automata import *
 from complement import *
 from comp import *
 from comp2 import *
-from binarytree import *
 from tree import *
 
 def analyse_predicates(file_text):

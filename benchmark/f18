@@ -1,0 +1,9 @@
+(forall J
+(and
+  (and (sing I) (sing J))
+  (implies
+    (and (succ J I) (sub I X))
+    (sub J Y)
+  )
+)
+)

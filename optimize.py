@@ -239,16 +239,25 @@ def optimize(a):
     count = len(a.states)
 
     edit_names(a)
-    edit_transitions(a)
+    print("Before remove unreachable parts")
     a=remove_unreachable_parts(a)
+    print("After remove unreachable parts")
+    print("Before tarjan")
     remove_useless_scc(a)
+    print("After tarjan")
     
     print("> Tarjan: {}".format(count-len(a.states)))
     count = len(a.states)
-    
+   
+    write_to_gv(a, "graph2.gv")
+    print("Before reduction")
     reduction(a)
+    print("After reduction")
     a=remove_unreachable_parts(a)
     edit_names(a)
+    print("Before edit transitions")
+    edit_transitions(a)
+    print("After edit transitions")
 
     print("> Direct simulation: {}\n".format(count-len(a.states)))
     count = len(a.states)

@@ -1,4 +1,4 @@
-#define (insm I J U V W) (implies (and (sing J) (sub J U)) (or (and (sing I) (sub I V)) (and (sing I) (sub I W))))
+#define (insm I J U V W) (and (and (sing I) (sing J)) (implies (and (sing J) (sub J U)) (or (and (sing I) (sub I V)) (and (sing I) (sub I W)))))
 
 (insm I J U V W)
 

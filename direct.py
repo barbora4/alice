@@ -1,5 +1,6 @@
 from automaton import *
 from itertools import product
+from optimize import *
 
 def direct_simulation(a):
     """Direct simulation for automaton a."""
@@ -12,6 +13,7 @@ def direct_simulation(a):
     a.transitions = copy(tran)
 
     # cardinality
+    complete = True
     card={}
     for c in a.alphabet:
         dic={}
@@ -20,7 +22,20 @@ def direct_simulation(a):
             for t in a.transitions:
                 if t[0]==q and input_equal(c,t[1]):
                     dic[q] += 1
+            if dic[q]==0:
+                complete=False
         card[c]=dic
+    
+    #####
+    if not complete:
+        a.states.add(str(len(a.states)))
+        for c in a.alphabet:
+            card[c][str(len(a.states)-1)]=0
+            for q in a.states:
+                if card[c][q]==0:
+                    a.transitions.append([q, c, str(len(a.states)-1)])
+                    card[c][q]+=1
+    #####
 
     # matrices - initialize all N(a)s with 0s
     mat = {}
@@ -40,12 +55,21 @@ def direct_simulation(a):
 
     # states with cardinality 0
     # card[c][y]==0 and card[c][x]!=0 => w.add((x,y))
-    for c in a.alphabet:
-        for x in a.states:
-            for y in a.states:
-                if card[c][y]==0 and card[c][x]!=0 and x!=y:
-                    w.add((x,y))
-                    queue.append((x,y)) ###!!!
+    """
+    for x in a.states:
+        for y in a.states:
+            add=True
+            if x != y:
+                for t1 in a.transitions:
+                    if t1[0]==x and t1[2]!=x:
+                        for t2 in a.transitions:
+                            if t2[0]==y and t2[2]!=y:
+                                if input_equal(t1[1], t2[1]):
+                                    add=False
+            if add:
+                w.add((x,y))
+                queue.append((x,y))
+    """
 
     while len(queue)!=0:
         new = queue.pop(0)    # dequeue
@@ -60,6 +84,13 @@ def direct_simulation(a):
                                     w.add((t2[0], t[0])) 
                                     queue.append((t2[0],t[0])) 
 
+    if not complete:
+        a.states.remove(str(len(a.states)-1))
+        tran=list()
+        for t in a.transitions:
+            if not (t[0]==str(len(a.states)) or t[2]==str(len(a.states))):
+                tran.append(t)
+        a.transitions = copy(tran)
     all_combinations = set(product(a.states, a.states))
     direct = all_combinations - w   # direct simulation
     return direct
@@ -77,7 +108,8 @@ def merge(a, q0, q1):
     if q0 in a.accept or q1 in a.accept:
         a.accept.add("new")
     # remove old states
-    a.states.remove(q0)
+    if q0 in a.states:
+        a.states.remove(q0)
     if q1 in a.states:
         a.states.remove(q1)
     if q0 in a.start:
@@ -108,7 +140,7 @@ def reduction(a):
     change = True
     while change:
         edit_names(a)
-        edit_transitions(a)
+        #edit_transitions(a)
 
         change = False
         skip=False
@@ -124,7 +156,7 @@ def reduction(a):
 
 
         #TODO: does it work for Buchi automata???
-        """
+        
         if not skip:
             # reversed automaton
             b=Automaton(copy(a.states), copy(a.alphabet), list(), copy(a.accept), copy(a.start))
@@ -138,7 +170,7 @@ def reduction(a):
                     merge(a, d[0], d[1])
                     skip=True
                     break
-            
+        """  
             if not skip:
                 for d in direct:
                     if d in left and d[0]!=d[1]:
@@ -194,4 +226,3 @@ def disconnect_little_brothers(a, direct):
 
                                         skip=True
                                         break
-
