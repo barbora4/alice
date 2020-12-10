@@ -1,0 +1,6 @@
+#define (inf X) (neg (exists A (and (sing A) (neg (exists B (and (sing B) (and (< A B) (sub B X))))))))
+
+(implies
+  (or (inf U) (inf V))
+  (or (inf X) (inf Y))
+)

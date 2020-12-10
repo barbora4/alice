@@ -192,9 +192,13 @@ def comp2(a):
                                                                     
                 if len(max_function_state)!=0:
                     skip=False
-                    new_state = max_function_state[0]
+                    #new_state = max_function_state[0]
+                    #####TODO: error! new_state is always the first here!
+                    found=False
                     for m in max_function_state:
+                        new_state = copy(m)
                         # is ranking maximal?
+                        #TODO: new_state or m??????? m not used anywhere...
                         if all(new_state[2][q]==max(new_state[2].values())-1 for q in a.accept&new_state[0]):
                             # exactly one state is mapped to every odd number smaller than max(ranking.values())
                             if max(new_state[2].values())%2==1:
@@ -218,8 +222,12 @@ def comp2(a):
                                     break
                         else:
                             skip=True
+                        if not skip:
+                            found = True
+                            #new_state = m
+                            #break
 
-                    if not skip:    
+                    if found: ###!!! 
                         if new_state not in states:
                             states.append(new_state)
                             Q2.append(new_state)
@@ -227,6 +235,7 @@ def comp2(a):
                                 accept.append(new_state)
                         if [states[i], c, new_state] not in transitions:
                             transitions.append([states[i], c, new_state])
+                            print(">>{}".format(transitions[-1]))
                         """
                     else:
                         new_state = set()

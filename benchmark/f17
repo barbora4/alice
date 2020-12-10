@@ -1,0 +1,13 @@
+(and
+  (and (sing Z) (sing Y))
+  (implies
+    (and
+      (and (sing Z) (sing Y)) 
+      (implies 
+        (and (succ Y Z) (sing Y))
+        (sub Z X)
+      )
+    )
+    (and (neg (sub Y X)) (sing Y))
+  )
+)

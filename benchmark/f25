@@ -1,0 +1,20 @@
+(and
+(neg
+(exists X
+(and (sing X)
+(neg (exists Y
+  (and (and (< X Y) (and (sing Y) (sub Y U))) (sub Y Z))
+))
+)
+)
+)
+(neg
+(exists X
+(and (sing X)
+(neg (exists Y
+  (and (and (< X Y) (and (sing Y) (sub Y U))) (neg (sub Y Z)))
+))
+)
+)
+)
+)
