@@ -3,7 +3,6 @@ from automaton import *
 from optimize import *
 from atomic_automata import *
 from intersection import input_equal
-from complement import *
 
 def comp2(a):
     """Constructs complement of a Buchi automaton a."""
@@ -182,90 +181,6 @@ def comp2(a):
                                     accept.append(new_state)
                             if [states[i], c, new_state] not in transitions:
                                 transitions.append([states[i], c, new_state])
-                                                                    
-                """
-                if len(max_function_state)!=0:
-                    skip=False
-                    new_state = max_function_state[0]
-                    found=False
-                    for m in max_function_state:
-                        skip=False
-                        new_state = copy(m)
-                        # is ranking maximal?
-                        #TODO:::::if all(new_state[2][q]==max(new_state[2].values())-1 for q in a.accept&new_state[0]):
-                        if all(new_state[2][q]==max(new_state[2].values())-1 for q in a.accept):
-                            # exactly one state is mapped to every odd number smaller than max(ranking.values())
-                            if max(new_state[2].values())%2==1: # odd ranking
-                                for j in range(1,max(new_state[2].values()),2): # odd number smaller than max(ranking.values())
-                                    if sum(x==j for x in new_state[2].values())!=1:
-                                        #TODO:::::
-                                        #if j==1:
-                                        #    count=0
-                                        #    for s in new_state[0]:
-                                        #        if new_state[2][s]==1:
-                                        #            count+=1
-                                        #    if count==1:
-                                        #        continue
-                                        skip=True
-                                        break
-                            else:
-                                skip=True
-                            # all remaining states *IN S* are mapped to max(ranking.values())
-                            for q in new_state[0]:
-                                if q not in a.accept and (new_state[2][q]%2!=1 and new_state[2][q]!=max(new_state[2].values())):
-                                    skip=True
-                                    break
-                        else:
-                            skip=True
-                        if not skip:
-                            found = True
-                            break
-                    
-                    if found: ###!!! 
-                        if new_state not in states:
-                            states.append(new_state)
-                            Q2.append(new_state)
-                            if len(new_state[1])==0:
-                                accept.append(new_state)
-                        if [states[i], c, new_state] not in transitions:
-                            transitions.append([states[i], c, new_state])
-                            print("----------------------------3")
-                            print(">>{}".format(transitions[-1]))
-                    else:
-                        new_state = set()
-
-                    if len(new_state)!=0:
-                        # fourth type of transitions
-                        if (len(new_state[1])==0 or new_state[3]!=0):
-                            for r in R:
-                                skip=False
-
-                                for q in a.states-new_state[0]:
-                                    r[q]=1
-
-                                # S-tight
-                                if max(r.values())%2==1: #odd rank
-                                    for j in range(1, max(r.values())+1, 2): 
-                                        if sum(x==j for x in r.values())==0:
-                                            skip=True
-                                            break
-                                        elif j==1: #!!!!!
-                                            if not any(r[q]==1 for q in new_state[0]):
-                                                skip=True
-
-                                if not skip:
-                                    if all(r[q]==new_state[2][q]-1 for q in new_state[1]):
-                                        if all(r[q]==new_state[2][q] for q in a.states-new_state[1]):
-                                            other_state=[copy(new_state[0]), set(), r, copy(new_state[3])]
-                                            if other_state not in states:
-                                                states.append(other_state)
-                                                Q2.append(other_state)
-                                            if other_state not in accept:
-                                                accept.append(other_state)
-                                            if [states[i], c, other_state] not in transitions:
-                                                transitions.append([states[i], c, other_state])
-                                                print("4th transition: {}".format(transitions[-1]))    
-                        """
 
         i+=1
     print("Complement done")

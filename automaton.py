@@ -217,4 +217,44 @@ def input_equal(a,t):
     
     return True
 
+def one_start_state(b):
+    """Automaton will have only one start state."""
 
+    b.states.add("new")
+    # add transitions from new start state
+    old_transitions=copy(b.transitions)
+    for t in old_transitions:
+        if t[0] in b.start:
+            b.transitions.append(("new",t[1],t[2]))
+            if not any(i[0]==t[0] and i[0]==i[2] for i in old_transitions):
+                # remove old start states without self loop
+                b.transitions.remove(t)
+            # if one of the old start states was accepting, the new one will be as well
+            if t[0] in b.accept:
+                b.accept.add("new")
+
+    # remove old start states
+    for s in copy(b.start):
+        if not any(t[0] in b.states or t[2] in b.states for t in b.transitions):
+            b.states.remove(s)
+    
+    b.start={"new"}
+
+    # remove accept states
+    for s in copy(b.accept):
+        if s not in b.states:
+            b.accept.remove(s)
+
+    b.transitions=list(b.transitions)
+    for i in range(len(b.transitions)):
+        b.transitions[i]=list(b.transitions[i])
+
+    # remove duplicate transitions
+    tran=list()
+    for t in b.transitions:
+        if t not in tran:
+            tran.append(t)
+    b.transitions = copy(tran)
+
+    edit_names(b)
+    edit_transitions(b)
