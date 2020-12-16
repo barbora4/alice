@@ -54,6 +54,7 @@ def create_tree(formula, predicates):
     
     a = create_aut(root)
     write_to_gv(a, "graph.gv")
+    write_all_transitions(a)
     write_to_file(a, "a.ba")
 
 class newNode:

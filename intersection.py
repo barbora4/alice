@@ -8,9 +8,11 @@ from optimize import *
 
 def intersection(a1,a2):
     """Algorithm for intersection of 2 Buchi automata."""
+    print("intersection start")
 
     # add all variables to input alphabet and transitions
     cylindrification(a1,a2)
+    print("after cylindrification")
 
     W=list(itertools.product(a1.start,a2.start,{'1'}))  # all reachable states
     Q=set()                                             # visited states  
@@ -80,7 +82,9 @@ def intersection(a1,a2):
 
     a=Automaton(Q,a1.alphabet|a2.alphabet,transitions,start,accept)
     
-    a=find_and_change_cycles(a)
+    #a=find_and_change_cycles(a)
+    print("before optimize")
     optimize(a)
+    print("intersection done")
 
     return a

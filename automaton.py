@@ -54,6 +54,19 @@ def load_data(file):
     return Automaton(states,alphabet,transitions,start,accept)
 
 
+def write_all_transitions(a):
+    print("start")
+    while any('?' in tran[1] for tran in a.transitions):
+        transitions = list()
+        for t in a.transitions:
+            if '?' not in t[1]:
+                transitions.append(t)
+            else:
+                transitions.append([t[0], t[1].replace('?', '0', 1), t[2]])
+                transitions.append([t[0], t[1].replace('?', '1', 1), t[2]])
+        a.transitions = copy(transitions)
+    print("end")
+
 def write_to_file(a,f):
     """Writes automaton to .ba file."""
 

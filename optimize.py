@@ -246,10 +246,11 @@ def optimize(a):
     remove_useless_scc(a)
     print("After tarjan")
     
+    #write_to_gv(a, "graph4.gv")
     print("> Tarjan: {}".format(count-len(a.states)))
     count = len(a.states)
    
-    write_to_gv(a, "graph2.gv")
+    #write_to_gv(a, "graph2.gv")
     print("Before reduction")
     reduction(a)
     print("After reduction")

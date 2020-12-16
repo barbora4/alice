@@ -7,7 +7,6 @@ from complement import *
 
 def comp2(a):
     """Constructs complement of a Buchi automaton a."""
-    print(a.accept)
 
     if a==true():
         return false()
@@ -20,12 +19,10 @@ def comp2(a):
     
     all_combinations = list()
     for state in a.states:
-        all_combinations.append(list(range(maxRanking+1)))
-        #if state not in a.accept:
-        #    all_combinations.append(list(range(maxRanking+1)))
-        #else:
-        #    all_combinations.append(list(range(maxRanking+1))) 
-            #all_combinations.append(list(range(maxRanking+1))[1::2]) 
+        if state in a.accept:
+            all_combinations.append(list(range(maxRanking+1))[::2])    
+        else:
+            all_combinations.append(list(range(maxRanking+1)))
     all_combinations = list(product(*all_combinations))
     R=list()
     for i in range(len(all_combinations)):
@@ -49,11 +46,11 @@ def comp2(a):
     transitions=list()
     i=0
     while i < len(states):
-        print(len(states))
+        print("{} / {}".format(i, len(states)))
         for c in a.alphabet:
             reachable_states = set()
                      
-            if states[i] not in Q2 and all(q in a.states for q in states[i]): 
+            if states[i] not in Q2 and (all(q in a.states for q in states[i])): 
                 # reachable states
                 for t in a.transitions:
                     if t[0] in states[i] and input_equal(c, t[1]):
@@ -81,39 +78,23 @@ def comp2(a):
                     for q in not_reachable: 
                         ranking[q]=1
                     if max(ranking.values())%2==1:
-                        # ranking has to be maximal w.r.t. states[i]
-                        # ranking maps all accepting states in the run to max(ranking.values())-1
-                        if all(ranking[q]==max(ranking.values())-1 for q in a.accept&P):
-                            # exactly one state is mapped to every odd number smaller than max(ranking.values())
-                            if max(ranking.values())%2==1:
-                                for j in range(1,max(ranking.values()),2): # odd number smaller than max(ranking.values())
-                                    if sum(x==j for x in ranking.values())!=1:
-                                        if j==1:
-                                            count=0
-                                            for s in P:
-                                                if ranking[s]==1:
-                                                    count+=1
-                                            if count==1:
-                                                continue
-                                        skip=True
-                                        break
-                            else:
+                        # at least one state in S is mapped to every odd number up to max(ranking.values())
+                        for j in range(1,max(ranking.values())+1,2): # odd numbers up to max(ranking.values())
+                            if sum(x==j for x in ranking.values())==0:
+                                # no state mapped onto this number
                                 skip=True
-                            # all remaining states *IN S* are mapped to max(ranking.values())
-                            for q in P:
-                                if q not in a.accept and (ranking[q]%2!=1 and ranking[q]!=max(ranking.values())): ## WRONG CONDITION!!!
-                                    skip=True
-                                    break
+                                break
+                        if not any(ranking[q] == 1 for q in P):
+                            skip=True
                         
-                            if not skip:
-                                new = [P, set(), ranking, 0]
-                                if new not in Q2:
-                                    states.append(new)
-                                    Q2.append(new)
-                                    accept.append(new)
-                                if [states[i], c, new] not in transitions:
-                                    transitions.append([states[i], c, new])
-                                    print(transitions[-1])
+                        if not skip:
+                            new = [P, set(), ranking, 0]
+                            if new not in Q2:
+                                states.append(new)
+                                Q2.append(new)
+                                accept.append(new)
+                            if [states[i], c, new] not in transitions:
+                                transitions.append([states[i], c, new])
 
         
             elif states[i] in Q2:
@@ -134,7 +115,11 @@ def comp2(a):
             
                 # level ranking has to be lower or equal
                 max_function_state = list()
+                new_state=list()
                 for rank in R:
+                    #max_function_state=list()
+                    #new_state=list()
+
                     ranking = copy(rank)
                     skip=False
                     
@@ -147,7 +132,7 @@ def comp2(a):
                             if sum(x==j for x in ranking.values())==0:
                                 skip=True
                                 break
-                            elif j==1: #!!!!!
+                            if j==1: #!!!!!
                                 if not any(ranking[q]==1 for q in P):
                                     skip=True
                     else:
@@ -159,12 +144,11 @@ def comp2(a):
                             for t in a.transitions:
                                 if t[2]==q and t[0] in states[i][0] and input_equal(c, t[1]):
                                     minimum = min(minimum, states[i][2][t[0]])
-                            if not (ranking[q]<=minimum): 
+                            if not (ranking[q]<=minimum):
                                 skip=True
-                                break
-                    
+                                break 
+
                     if not skip:
-                        end=False
                         # same ranking
                         if max(ranking.values())==max(states[i][2].values()):
                             # first option
@@ -190,46 +174,53 @@ def comp2(a):
                                 O=O1&O2 # intersection
 
                             new_state = [P, O, ranking, j]
-                            max_function_state.append(new_state)
+
+                            if new_state not in states:
+                                states.append(new_state)
+                                Q2.append(new_state)
+                                if len(O)==0:
+                                    accept.append(new_state)
+                            if [states[i], c, new_state] not in transitions:
+                                transitions.append([states[i], c, new_state])
                                                                     
+                """
                 if len(max_function_state)!=0:
                     skip=False
-                    #new_state = max_function_state[0]
-                    #####TODO: error! new_state is always the first here!
+                    new_state = max_function_state[0]
                     found=False
                     for m in max_function_state:
                         skip=False
                         new_state = copy(m)
                         # is ranking maximal?
-                        #TODO: new_state or m??????? m not used anywhere...
-                        if all(new_state[2][q]==max(new_state[2].values())-1 for q in a.accept&new_state[0]):
+                        #TODO:::::if all(new_state[2][q]==max(new_state[2].values())-1 for q in a.accept&new_state[0]):
+                        if all(new_state[2][q]==max(new_state[2].values())-1 for q in a.accept):
                             # exactly one state is mapped to every odd number smaller than max(ranking.values())
-                            if max(new_state[2].values())%2==1:
+                            if max(new_state[2].values())%2==1: # odd ranking
                                 for j in range(1,max(new_state[2].values()),2): # odd number smaller than max(ranking.values())
                                     if sum(x==j for x in new_state[2].values())!=1:
-                                        if j==1:
-                                            count=0
-                                            for s in new_state[0]:
-                                                if new_state[2][s]==1:
-                                                    count+=1
-                                            if count==1:
-                                                continue
+                                        #TODO:::::
+                                        #if j==1:
+                                        #    count=0
+                                        #    for s in new_state[0]:
+                                        #        if new_state[2][s]==1:
+                                        #            count+=1
+                                        #    if count==1:
+                                        #        continue
                                         skip=True
                                         break
                             else:
                                 skip=True
                             # all remaining states *IN S* are mapped to max(ranking.values())
                             for q in new_state[0]:
-                                if q not in a.accept and (new_state[2][q]%2!=1 and new_state[2][q]!=max(new_state[2].values())): ###WRONG CONDITION!!!
+                                if q not in a.accept and (new_state[2][q]%2!=1 and new_state[2][q]!=max(new_state[2].values())):
                                     skip=True
                                     break
                         else:
                             skip=True
                         if not skip:
                             found = True
-                            #new_state = m
                             break
-
+                    
                     if found: ###!!! 
                         if new_state not in states:
                             states.append(new_state)
@@ -238,16 +229,8 @@ def comp2(a):
                                 accept.append(new_state)
                         if [states[i], c, new_state] not in transitions:
                             transitions.append([states[i], c, new_state])
+                            print("----------------------------3")
                             print(">>{}".format(transitions[-1]))
-                        """
-                    else:
-                        new_state = set()
-                        if new_state not in states:
-                            states.append(new_state)
-                            accept.append(new_state)
-                        if [states[i], c, new_state] not in transitions:
-                            transitions.append([states[i], c, new_state])
-                        """
                     else:
                         new_state = set()
 
@@ -256,10 +239,12 @@ def comp2(a):
                         if (len(new_state[1])==0 or new_state[3]!=0):
                             for r in R:
                                 skip=False
+
+                                for q in a.states-new_state[0]:
+                                    r[q]=1
+
                                 # S-tight
                                 if max(r.values())%2==1: #odd rank
-                                    for q in a.states-new_state[0]:
-                                        r[q]=1
                                     for j in range(1, max(r.values())+1, 2): 
                                         if sum(x==j for x in r.values())==0:
                                             skip=True
@@ -280,7 +265,8 @@ def comp2(a):
                                             if [states[i], c, other_state] not in transitions:
                                                 transitions.append([states[i], c, other_state])
                                                 print("4th transition: {}".format(transitions[-1]))    
-            
+                        """
+
         i+=1
     print("Complement done")
 
