@@ -1,3 +1,6 @@
+# Table
+https://docs.google.com/spreadsheets/d/1-e7OKw5duATeTCx1MOtu_vR-cs8xhbJl12szeN89q-Y/edit?usp=sharing
+
 # Input syntax for S1S formulae
 
 ## Built-in constructions
@@ -14,6 +17,7 @@
 | (succ (X Y))		| X is a successor of Y		|
 | (zeroin X)		| 0 <span>&#8712;</span> X	|
 | (sing X)		| X is a singleton		|
+| (< X Y) | X < Y and both X and Y are singletons|
 
 ## User-defined predicates
 
@@ -31,7 +35,7 @@ Use syntax similar to syntax for macros in C
 (not_sub (Y Z))
 ```
 
-## Statistics
+# Statistics
 
 <a href="https://github.com/barbora4/projektova-praxe/blob/master/benchmark/f01">Formula:</a>
 ```
