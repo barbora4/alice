@@ -4,7 +4,7 @@ from automaton import Automaton
 from intersection import *
 from union import *
 from atomic_automata import *
-from comp2 import *
+from complement import *
 from tree import *
 
 def analyse_predicates(file_text):
