@@ -1,0 +1,42 @@
+(and
+ (and
+  (neg
+  (exists U
+  (and (sing U)
+  (neg (exists Z
+    (and (and (< U Z) (and (sing Z) (sub Z X))) (sub Z Y))
+  ))
+  )
+  )
+  )
+  (neg
+  (exists U
+  (and (sing U)
+  (neg (exists Z
+    (and (and (< U Z) (and (sing Z) (sub Z X))) (and (neg (sub Z Y)) (sing Z)))
+  ))
+  )
+  )
+  )
+ )
+ (and
+  (neg
+  (exists U
+  (and (sing U)
+  (neg (exists Z
+    (and (and (< U Z) (and (sing Z) (and (neg (sub Z X)) (sing Z)))) (sub Z Y))
+  ))
+  )
+  )
+  )
+  (neg
+  (exists U
+  (and (sing U)
+  (neg (exists Z
+    (and (and (< U Z) (and (sing Z) (and (neg (sub Z X)) (sing Z)))) (and (neg (sub Z Y)) (sing Z)))
+  ))
+  )
+  )
+  )
+ )
+)

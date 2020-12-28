@@ -1,1 +1,16 @@
-(and (and (sing X) (sing Y)) (succ Y X)) 
+(and
+(< X Y)
+(neg
+(exists Z
+(and
+ (and (and (sing X) (sing Y)) (sing Z)) 
+ (neg
+  (or
+   (and (neg (< X Z)) (and (sing X) (sing Z)))
+   (and (neg (< Z Y)) (and (sing Z) (sing Y)))
+  )
+ )
+)
+)
+)
+)

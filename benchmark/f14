@@ -1,4 +1,8 @@
 (neg
+(exists U
+(and
+(sing U)
+(neg
 (exists A (exists B
  (and
   (< U A)
@@ -11,4 +15,7 @@
   )
  )
 ))
+)
+)
+)
 )

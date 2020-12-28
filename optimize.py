@@ -251,6 +251,7 @@ def optimize(a):
     count = len(a.states)
    
     #write_to_gv(a, "graph2.gv")
+    #write_to_file(a, "b.ba")
     print("Before reduction")
     reduction(a)
     print("After reduction")

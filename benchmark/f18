@@ -1,7 +1,18 @@
+(neg
+(exists I
+(exists J
+(and
+(and (sing I) (sing J))
+(neg
 (and
   (and (sing I) (sing J))
   (implies
     (and (and (succ J I) (sub I X)) (sing I))
     (and (sub J Y) (sing J))
   )
+)
+)
+)
+)
+)
 )

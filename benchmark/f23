@@ -1,0 +1,12 @@
+#define (insm I J A B C) (and (and (sing I) (sing J)) (implies (and (sing J) (sub J A)) (or (and (sing I) (sub I B)) (and (sing I) (sub I C)))))
+
+(implies
+ (and (succ J I) (sing J))
+ (and
+  (insm I J Z U Y)
+  (and
+   (and (insm I J U V Z) (insm I J V X V))
+   (and (insm I J X Y V) (insm I J X Y V))
+  )
+ )
+)

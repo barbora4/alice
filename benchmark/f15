@@ -1,0 +1,8 @@
+#define (infsuc X Y) (neg (exists U (and (sing U) (neg (exists A (exists B (and (< U A) (and (succ B A) (and (and (sing A) (sing B)) (and (sub A X) (sub B Y)))))))))))
+
+(exists Y
+ (and
+  (infsuc X Y)
+  (infsuc Z Y)
+ )
+)

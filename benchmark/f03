@@ -1,9 +1,18 @@
+(neg
+(exists U
+(and
+(sing U)
+(neg
 (and 
  (sing U)
  (implies
-  (sub U X)
+  (and (sub U X) (sing U))
   (exists Z
    (and (< U Z) (sub Z Y))
   )
  )
+)
+)
+)
+)
 )

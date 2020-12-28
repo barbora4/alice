@@ -1,7 +1,30 @@
 (and
- (and (sing Z) (sing Y))
+(and (sing Z) (sing Y))
+(neg
+ (and
+  (and (sing Z) (sing Y))
+  (and
+  (implies
+   (and
+    (and (sing Z) (sing Y))
+    (implies
+     (and (sing Z) (succ Y Z))
+     (sub Z X)
+    )
+   )
+   (and (neg (sub Y X)) (sing Y))
+  )
  (implies
-  (and (sing Z) (succ Y Z))
-  (sub Z X)
+  (and (neg (sub Y X)) (sing Y))
+  (and
+    (and (sing Z) (sing Y))
+    (implies
+     (and (sing Z) (succ Y Z))
+     (sub Z X)
+    )
+   )
  )
+ )
+ )
+)
 )

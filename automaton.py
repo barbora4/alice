@@ -46,7 +46,7 @@ def load_data(file):
             elif re.search(r"^\[(.)+\]\n$", line) and not beginning:
                 accept.add(line[1:-2])
                 states.add(line[1:-2])
-
+            
             # wrong file format
             else:
                 raise SyntaxError("Wrong format!")
@@ -55,7 +55,6 @@ def load_data(file):
 
 
 def write_all_transitions(a):
-    print("start")
     while any('?' in tran[1] for tran in a.transitions):
         transitions = list()
         for t in a.transitions:
@@ -65,7 +64,6 @@ def write_all_transitions(a):
                 transitions.append([t[0], t[1].replace('?', '0', 1), t[2]])
                 transitions.append([t[0], t[1].replace('?', '1', 1), t[2]])
         a.transitions = copy(transitions)
-    print("end")
 
 def write_to_file(a,f):
     """Writes automaton to .ba file."""
@@ -258,3 +256,21 @@ def one_start_state(b):
 
     edit_names(b)
     edit_transitions(b)
+
+
+def complete_automaton(a):
+    complete = True
+    for q in a.states:
+        for c in a.alphabet:
+            if not any(t[0]==q and input_equal(c, t[1]) for t in a.transitions):
+                complete = False
+                break
+    
+    if not complete:
+        a.states.add("new")
+        for q in a.states:
+            for c in a.alphabet:
+                if not any(t[0]==q and input_equal(c, t[1]) for t in a.transitions):
+                    a.transitions.append([q, c, "new"])
+
+    edit_names(a)
