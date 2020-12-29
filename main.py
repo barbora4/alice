@@ -9,7 +9,7 @@ file_text=stdin.read()
 parse(file_text, analyse_predicates(file_text))
 
 # reduce final automaton
-stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
 output = stream.read()
 print(output)
 

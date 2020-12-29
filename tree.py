@@ -289,7 +289,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -297,7 +297,7 @@ def create_aut(node):
         a.alphabet = alphabet
         # reduce after complement
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -317,13 +317,13 @@ def create_aut(node):
             output = stream.read()
             print(output)
             # convert to .hoa
-            stream = subprocess.Popen('python3 /home/barborasmahlikova/Documents/ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
             stream.wait()
             # complement using spot
             stream = subprocess.Popen('autfilt --complement --ba a.hoa >a_neg.hoa', shell=True)
             stream.wait()
             # convert to .ba
-            stream = subprocess.Popen('python3 /home/barborasmahlikova/Documents/ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
             stream.wait()
             with open('a.ba') as f:
                 a = load_data(f)
@@ -335,7 +335,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -347,7 +347,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -364,13 +364,13 @@ def create_aut(node):
             output = stream.read()
             print(output)
             # convert to .hoa
-            stream = subprocess.Popen('python3 /home/barborasmahlikova/Documents/ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
             stream.wait()
             # complement using spot
             stream = subprocess.Popen('autfilt --complement --ba a.hoa >a_neg.hoa', shell=True)
             stream.wait()
             # convert to .ba
-            stream = subprocess.Popen('python3 /home/barborasmahlikova/Documents/ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
             stream.wait()
             with open('a.ba') as f:
                 a = load_data(f)
@@ -381,7 +381,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -394,7 +394,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -409,7 +409,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -427,13 +427,13 @@ def create_aut(node):
             output = stream.read()
             print(output)
             # convert to .hoa
-            stream = subprocess.Popen('python3 /home/barborasmahlikova/Documents/ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
             stream.wait()
             # complement using spot
             stream = subprocess.Popen('autfilt --complement --ba a.hoa >a_neg.hoa', shell=True)
             stream.wait()
             # convert to .ba
-            stream = subprocess.Popen('python3 /home/barborasmahlikova/Documents/ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
             stream.wait()
             with open('a.ba') as f:
                 a = load_data(f)
@@ -445,7 +445,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
@@ -456,7 +456,7 @@ def create_aut(node):
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar /home/barborasmahlikova/Documents/RABIT250/Reduce.jar a.ba 10')
+        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
         output = stream.read()
         print(output)
         with open('reduced_10_a.ba') as f:
