@@ -1,3 +1,9 @@
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# NBA complementation
+###################################################################
+
 import itertools
 from automaton import *
 from optimize import *
@@ -15,11 +21,11 @@ def comp2(a):
     # level ranking is a function g: a.states -> {0,...,2*|a.states|}
     # 1 indicates that the state is not present in the level of the run DAG
     maxRanking = 2*(len(a.states)-len(a.accept))
-    
+
     all_combinations = list()
     for state in a.states:
         if state in a.accept:
-            all_combinations.append(list(range(maxRanking+1))[::2])    
+            all_combinations.append(list(range(maxRanking+1))[::2]) #!!!   
         else:
             all_combinations.append(list(range(maxRanking+1)))
     all_combinations = list(product(*all_combinations))
@@ -31,7 +37,6 @@ def comp2(a):
             dictionary[state]=all_combinations[i][j]
             j+=1
         R.append(dictionary)
-
 
     # start states
     start=[copy(a.start)]
@@ -45,7 +50,6 @@ def comp2(a):
     transitions=list()
     i=0
     while i < len(states):
-        print("{} / {}".format(i, len(states)))
         for c in a.alphabet:
             reachable_states = set()
                      
@@ -186,10 +190,8 @@ def comp2(a):
     print("Complement done")
 
     b=Automaton(states, a.alphabet, transitions, start, accept)
-    write_to_gv(b, "graph3.gv")
+    write_to_gv(b, 'test.gv')
     optimize(b)
-    print("Optimizations done")
     one_start_state(b)  # automaton will have only one start state
-    print("Done")
 
     return b

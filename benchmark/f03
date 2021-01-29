@@ -1,18 +1,16 @@
-(neg
-(exists U
-(and
-(sing U)
-(neg
-(and 
- (sing U)
- (implies
-  (and (sub U X) (sing U))
-  (exists Z
-   (and (< U Z) (sub Z Y))
+(neg (exists U
+ (and
+  (sing U)
+  (neg
+   (and 
+    (sing U)
+    (implies
+     (and (sub U X) (sing U))
+     (exists Z
+      (and (< U Z) (sub Z Y))
+     )
+    )
+   ) 
   )
  )
-)
-)
-)
-)
-)
+))

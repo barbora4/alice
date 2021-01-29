@@ -1,4 +1,4 @@
-#define (suc X Y) (and (and (sing X) (sing Y)) (succ X Y))
+#define (suc A B) (and (< A B) (neg (exists C (and (and (and (sing A) (sing B)) (sing C)) (neg (or (and (neg (< A C)) (and (sing A) (sing C))) (and (neg (< C B)) (and (sing C) (sing B)))))))))
 
 (exists Z
   (and

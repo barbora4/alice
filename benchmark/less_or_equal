@@ -1,0 +1,14 @@
+(and (sing X) (and (sing Y) (forall Z
+ (implies
+  (and
+   (sub Y Z)
+   (forall U
+    (implies
+     (forall V (implies (succ V U) (sub V Z)))
+     (sub U Z)
+    )
+   )
+  )
+  (sub X Z)
+ )
+)))

@@ -1,3 +1,9 @@
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# Direct simulation and disconnecting little brother states
+###################################################################
+
 from automaton import *
 from itertools import product
 from optimize import *
@@ -26,7 +32,6 @@ def direct_simulation(a):
                 complete=False
         card[c]=dic
     
-    #####
     if not complete:
         a.states.add(str(len(a.states)))
         for c in a.alphabet:
@@ -35,7 +40,6 @@ def direct_simulation(a):
                 if card[c][q]==0:
                     a.transitions.append([q, c, str(len(a.states)-1)])
                     card[c][q]+=1
-    #####
 
     # matrices - initialize all N(a)s with 0s
     mat = {}
@@ -52,24 +56,6 @@ def direct_simulation(a):
         for j in (a.states-a.accept):
             w.add((i, j))
             queue.append((i, j))
-
-    # states with cardinality 0
-    # card[c][y]==0 and card[c][x]!=0 => w.add((x,y))
-    """
-    for x in a.states:
-        for y in a.states:
-            add=True
-            if x != y:
-                for t1 in a.transitions:
-                    if t1[0]==x and t1[2]!=x:
-                        for t2 in a.transitions:
-                            if t2[0]==y and t2[2]!=y:
-                                if input_equal(t1[1], t2[1]):
-                                    add=False
-            if add:
-                w.add((x,y))
-                queue.append((x,y))
-    """
 
     while len(queue)!=0:
         new = queue.pop(0)    # dequeue
@@ -97,8 +83,6 @@ def direct_simulation(a):
 
 def merge(a, q0, q1):
     """Merges two states in automaton a."""
-    
-    #print(">Merging")
 
     # merge these two states and update preorder
     # add new state
@@ -107,6 +91,7 @@ def merge(a, q0, q1):
         a.start.add("new")
     if q0 in a.accept or q1 in a.accept:
         a.accept.add("new")
+    
     # remove old states
     if q0 in a.states:
         a.states.remove(q0)
@@ -120,12 +105,14 @@ def merge(a, q0, q1):
         a.accept.remove(q0)
     if q1 in a.accept:
         a.accept.remove(q1)
+    
     # adjust transitions
     for i in range(len(a.transitions)):
         if a.transitions[i][0]==q0 or a.transitions[i][0]==q1:
             a.transitions[i][0]="new"
         if a.transitions[i][2]==q0 or a.transitions[i][2]==q1:
             a.transitions[i][2]="new"
+    
     # remove duplicate transitions
     tran = list()
     for t in a.transitions:
@@ -140,7 +127,6 @@ def reduction(a):
     change = True
     while change:
         edit_names(a)
-        #edit_transitions(a)
 
         change = False
         skip=False
@@ -153,31 +139,6 @@ def reduction(a):
                 disconnect_little_brothers(a,direct)
                 skip=True
                 break
-
-
-        #TODO: does it work for Buchi automata???
-        """            
-        if not skip:
-            # reversed automaton
-            b=Automaton(copy(a.states), copy(a.alphabet), list(), copy(a.accept), copy(a.start))
-            for t in a.transitions:
-                b.transitions.append([t[2], t[1], t[0]])
-            
-            left = direct_simulation(b)
-            for d in left:
-                if (d[1],d[0]) in left and d[0]!=d[1]:
-                    change=True
-                    merge(a, d[0], d[1])
-                    skip=True
-                    break
-        
-            if not skip:
-                for d in direct:
-                    if d in left and d[0]!=d[1]:
-                        change=True
-                        merge(a, d[0], d[1])
-                        break
-        """
 
 
 def disconnect_little_brothers(a, direct):
@@ -216,13 +177,10 @@ def disconnect_little_brothers(a, direct):
                                                 new.append(transitions1[j])
                                             else:
                                                 count+=1
-                                                #print(">Removing transition: [{},{},{}]".format(a.transitions[i][0], transitions1[j], a.transitions[i][2]))
                                         
                                         for n in new:
                                             a.transitions.append([a.transitions[i][0], n, a.transitions[i][2]])
                                         a.transitions.remove(a.transitions[i])
-                                        
-                                        print(">Little brothers: {} transitions".format(count))
 
                                         skip=True
                                         break

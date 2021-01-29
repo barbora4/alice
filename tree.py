@@ -1,10 +1,16 @@
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# Creating tree from S1S formula
+###################################################################
+
 from parser import *
 import os
 import sys
 import subprocess
 
 def create_tree(formula, predicates):
-    "Creates tree from formula"
+    "Creates tree from S1S formula"
 
     form = formula[1:-1]
         
@@ -247,6 +253,7 @@ def change_tree(root):
                 node.left.left.right = newNode("neg")
                 node.left.left.right.left = tmp_right
                 node.left.left.right.right = None
+            
             # implication
             if node.data == "implies" and node.left.data == "neg":
                 node.data = "or"
@@ -257,6 +264,7 @@ def change_tree(root):
                 tmp = node.left.left
                 node.left.left = newNode("neg")
                 node.left.left.left = tmp
+            
             # two neg in a row
             if root.data == "neg" and root.left.data == "neg":
                 root = root.left.left
@@ -295,27 +303,39 @@ def create_aut(node):
         with open('reduced_10_a.ba') as f:
             a = load_data(f) # reduced automaton
         a.alphabet = alphabet
-        # reduce after complement
-        write_to_file(a, 'a.ba') # write to a.ba
-        stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
-        output = stream.read()
-        print(output)
-        with open('reduced_10_a.ba') as f:
-            a = load_data(f) # reduced automaton
-        a.alphabet = alphabet
 
-        a = exists(node.data[-1], a)
-        
         if spot:
             complete_automaton(a)
             # write to .ba file
             write_all_transitions(a)
-            print(a)
             write_to_file(a, 'a.ba')
-            print("now")
             stream = os.popen('cat a.ba')
             output = stream.read()
-            print(output)
+            # convert to .hoa
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
+            stream.wait()
+            # complement using spot
+            stream = subprocess.Popen('autfilt --complement --ba a.hoa >a_neg.hoa', shell=True)
+            stream.wait()
+            # convert to .ba
+            stream = subprocess.Popen('python3 ../ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
+            stream.wait()
+            with open('a.ba') as f:
+                a = load_data(f)
+            a.alphabet = alphabet
+        else:
+            a = comp2(a)
+
+        a = exists(node.data[-1], a)
+        
+        alphabet = a.alphabet
+        if spot:
+            complete_automaton(a)
+            # write to .ba file
+            write_all_transitions(a)
+            write_to_file(a, 'a.ba')
+            stream = os.popen('cat a.ba')
+            output = stream.read()
             # convert to .hoa
             stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
             stream.wait()
@@ -341,6 +361,7 @@ def create_aut(node):
         with open('reduced_10_a.ba') as f:
             a = load_data(f) # reduced automaton
         a.alphabet = alphabet
+
     elif node.data == "neg":
         # Rabit reduction before every complement
         a = create_aut(node.left)
@@ -357,12 +378,9 @@ def create_aut(node):
             complete_automaton(a)
             # write to .ba file
             write_all_transitions(a)
-            print(a)
             write_to_file(a, 'a.ba')
-            print("now")
             stream = os.popen('cat a.ba')
             output = stream.read()
-            print(output)
             # convert to .hoa
             stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
             stream.wait()
@@ -390,7 +408,6 @@ def create_aut(node):
         #a=comp2(create_aut(node.left))
     elif node.data == "and":
         a=intersection(create_aut(node.left), create_aut(node.right))
-        ###
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba
@@ -400,7 +417,6 @@ def create_aut(node):
         with open('reduced_10_a.ba') as f:
             a = load_data(f) # reduced automaton
         a.alphabet = alphabet
-        ###
     elif node.data == "or":
         a=union(create_aut(node.left), create_aut(node.right))
     elif node.data == "implies":
@@ -420,12 +436,9 @@ def create_aut(node):
             complete_automaton(a)
             # write to .ba file
             write_all_transitions(a)
-            print(a)
             write_to_file(a, 'a.ba')
-            print("now")
             stream = os.popen('cat a.ba')
             output = stream.read()
-            print(output)
             # convert to .hoa
             stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
             stream.wait()
@@ -452,7 +465,6 @@ def create_aut(node):
             a = load_data(f) # reduced automaton
         a.alphabet = alphabet
         a=union(a, create_aut(node.right))
-        ###
         alphabet = a.alphabet
         write_all_transitions(a)
         write_to_file(a, 'a.ba') # write to a.ba

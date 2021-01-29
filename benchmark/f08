@@ -1,4 +1,5 @@
-#define (suc2 X Y) (exists A (and (and (sing X) (and (sing Y) (sing A))) (and (succ X A) (succ A Y))))
+#define (suc A B) (and (< A B) (neg (exists C (and (and (and (sing A) (sing B)) (sing C)) (neg (or (and (neg (< A C)) (and (sing A) (sing C))) (and (neg (< C B)) (and (sing C) (sing B)))))))))
+#define (suc2 D E) (exists F (and (suc D F) (suc F E))) 
 
 (exists Z
   (and (suc2 X Z) (suc2 Z Y))

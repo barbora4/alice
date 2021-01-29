@@ -1,4 +1,8 @@
-"""Construction of atomic Buchi automata and operations over them."""
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# Construction of atomic Buchi automata and operations over them.
+###################################################################
 
 from copy import copy
 from itertools import product
@@ -32,11 +36,9 @@ def add_to_transitions(a1,alphabet1,alphabet2):
             # add to all transitions
             for i in range(len(copy(a1.transitions))):
                 if a1.transitions[i][1] != "":
-                    #a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'?'))
                     a1.transitions.append([a1.transitions[i][0], "{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'1')), a1.transitions[i][2]])
                     a1.transitions[i][1]="{}|{}".format(a1.transitions[i][1],"{}:{}".format(a,'0'))
                 else:
-                    #a1.transitions[i][1]="{}".format("{}:{}".format(a, '?'))
                     a1.transitions.append([a1.transitions[i][0], "{}".format("{}:{}".format(a, '1')), a1.transitions[i][2]])
                     a1.transitions[i][1]="{}".format("{}:{}".format(a, '0'))
     
@@ -145,15 +147,10 @@ def exists(X,a):
     if len(alphabet)==0:
         # true if it contains at least one accept state, otherwise false
         if len(a.accept)>0:
-            # true
             return true()
         else:
-            # false
             return false()
 
-    #remove_unreachable_parts(b)
-    #edit_names(b)
-    #edit_transitions(b)
     optimize(b)
     return b
 
@@ -176,8 +173,6 @@ def sub(X,Y):
     for s in start:
         # if an element is in X, it must be also in Y
         transitions.append([s,"{}:0|{}:?".format(X,Y),s])
-        #transitions.append([s,"{}:0|{}:0".format(X,Y),s])
-        #transitions.append([s,"{}:0|{}:1".format(X,Y),s])
         transitions.append([s,"{}:1|{}:1".format(X,Y),s])
 
     a = Automaton(states,alphabet,transitions,start,accept)
@@ -221,8 +216,6 @@ def zeroin(X):
     # first input must be X:1
     transitions.append(["0","{}:1".format(X),"1"])
     transitions.append(["1","{}:?".format(X),"1"])
-    #transitions.append(["1","{}:0".format(X),"1"])
-    #transitions.append(["1","{}:1".format(X),"1"])
     
     states=start|accept
 

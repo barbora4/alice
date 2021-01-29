@@ -1,4 +1,8 @@
-"""Class Automaton, loading data from .ba files and writing to them."""
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# Loading automaton from .ba file, writing to file
+###################################################################
 
 import re
 import csv

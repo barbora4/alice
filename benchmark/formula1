@@ -1,6 +1,0 @@
-(exists U
-  (neg
-    (implies 
-      (forall V (implies (succ (V U)) (sub (V Z))))
-      (sub (U Z))
-)))

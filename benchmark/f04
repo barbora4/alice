@@ -1,4 +1,4 @@
-#define (after X Y) (neg (exists U (and (sing U) (neg (and (sing U) (implies (sub U X) (exists Z (and (< U Z) (and (sing Z) (sub Z Y))))))))))
+#define (after A B) (neg (exists U (and (sing U) (neg (and (sing U) (implies (sub U A) (exists Z (and (< U Z) (and (sing Z) (sub Z B))))))))))
 
 (and
   (after X Y)

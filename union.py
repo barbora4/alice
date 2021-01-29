@@ -1,4 +1,8 @@
-"""Union of two Buchi automata."""
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# Union of two NBAs
+###################################################################
 
 from itertools import product
 from copy import copy 

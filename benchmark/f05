@@ -1,8 +1,9 @@
-#define (fair A B) (and (neg (exists U (and (sing U) (neg (and (sing U) (implies (sub U A) (exists V (and (< U V) (and (sing V) (sub V B)))))))))) (neg (exists U (and (sing U) (neg (and (sing U) (implies (sub U B) (exists V (and (< U V) (and (sing V) (sub V A)))))))))))
+#define (after A B) (neg (exists U (and (sing U) (neg (and (sing U) (implies (sub U A) (exists C (and (< U C) (and (sing C) (sub C B))))))))))
+#define (fair C D) (and (after C D) (after D C))
 
 (forall X
-(implies
+ (implies
   (fair X Y)
   (fair Y Z)
-)
+ )
 )

@@ -1,4 +1,8 @@
-"""Optimizations for Buchi automata."""
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# Optimizations for Büchi automata
+###################################################################
 
 from automaton import Automaton
 from intersection import *
@@ -215,51 +219,12 @@ def remove_unreachable_parts(a):
    
     return a
 
-def accept_all(a):
-    """Checks if automaton accepts all words over alphabet."""
-    
-    for t in a.transitions:
-        if t[0] in a.start:
-            if all(t[1][j]=="?" for j in range(2,len(t[1])+1,4)):
-                if any(t2[0]==t2[2] and t2[0]==t[2] and t2[0] in a.accept and all(t2[1][k]=="?" for k in range(2,len(t2[1])+1,4)) for t2 in a.transitions):
-                    a.start={"0"}
-                    a.accept={"0"}
-                    a.states={"0"}
-                    new=""
-                    for c in a.alphabet:
-                        new=c
-                        break
-                    new=new.replace("0",'?')
-                    new=new.replace("1",'?')
-                    a.transitions=[['0', new, '0']]
-
 def optimize(a):
-    """Reduces double cycles and removes useless strongly connected components."""
-
-    count = len(a.states)
-
     edit_names(a)
-    print("Before remove unreachable parts")
     a=remove_unreachable_parts(a)
-    print("After remove unreachable parts")
-    print("Before tarjan")
     remove_useless_scc(a)
-    print("After tarjan")
-    
-    #write_to_gv(a, "graph4.gv")
-    print("> Tarjan: {}".format(count-len(a.states)))
-    count = len(a.states)
    
-    #write_to_gv(a, "graph2.gv")
-    #write_to_file(a, "b.ba")
-    print("Before reduction")
     reduction(a)
-    print("After reduction")
     a=remove_unreachable_parts(a)
     edit_names(a)
-    print("Before edit transitions")
     edit_transitions(a)
-    print("After edit transitions")
-
-    print("> Direct simulation: {}\n".format(count-len(a.states)))
-    count = len(a.states)

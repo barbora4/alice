@@ -1,4 +1,8 @@
-"""LISP parser."""
+###################################################################
+# Barbora Šmahlíková
+# 2020/2021
+# S1S formula parser
+###################################################################
 
 from automaton import Automaton
 from intersection import *
@@ -82,7 +86,7 @@ def analyse_predicates(file_text):
 
 
 def parse(file_text, predicates):
-    """Creates a list of elements from LISP formula."""
+    """Creates a list of elements from S1S formula."""
 
     # skip lines with user-defined predicates
     lines = file_text.split('\n')
@@ -120,12 +124,23 @@ def parse(file_text, predicates):
         raise SyntaxError("Invalid form of input formula (parentheses not matching).")
     
 
-    create_tree(formula, predicates)
-    #return create_automaton(formula, predicates)   
+    #create_tree(formula, predicates)
+    a = create_automaton(formula, predicates) 
+    edit_transitions(a)
+    return a 
     
     
 def create_automaton(formula, predicates):
-    """Creates Buchi automaton from LISP formula in file f."""
+    """Creates Buchi automaton from S1S formula."""
+    
+    if "--spot" in sys.argv:
+        spot = True
+    else:
+        spot = False
+    if "--rabit" in sys.argv:
+        rabit = True
+    else:
+        rabit = False
     
     stack=[]
     atom=[]
@@ -161,8 +176,18 @@ def create_automaton(formula, predicates):
                 if not (isinstance(atom[3], Automaton)):
                     error=True
                 else:
-                    #a=complement(exists(atom[2], complement(atom[3])))
-                    a=comp2(exists(atom[2], comp2(atom[3])))
+                    a = atom[3]
+                    if spot:
+                        a = spot_complement(a)
+                    else:
+                        a=comp2(a)
+                    a = exists(atom[2], a)
+                    if rabit:
+                        a = rabit_reduction(a)
+                    if spot:
+                        a = spot_complement(a)
+                    else:
+                        a=comp2(a)
             elif atom[1]=="and":
                 if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
@@ -177,15 +202,23 @@ def create_automaton(formula, predicates):
                 if not (isinstance(atom[2], Automaton)):
                     error=True
                 else:
-                    #a=complement(atom[2])
-                    #a=comp(atom[2])
-                    a=comp2(atom[2])
+                    a = atom[2]
+                    if spot:
+                        a = spot_complement(a)
+                    else:
+                        a=comp2(a)
             elif atom[1]=="implies":
                 if not (isinstance(atom[2], Automaton) and isinstance(atom[3], Automaton)):
                     error=True
                 else:
-                    #a=union(complement(atom[2]), atom[3])
-                    a=union(comp2(atom[2]), atom[3])
+                    a = atom[2]
+                    if spot:
+                        a = spot_complement(a)
+                    else:
+                        a = comp2(a)
+                    if rabit:
+                        a = rabit_reduction(a)
+                    a=union(a, atom[3])
 
             # atomic automata
             elif atom[1]=="zeroin":
@@ -196,6 +229,8 @@ def create_automaton(formula, predicates):
                 a=sub(atom[2],atom[3])
             elif atom[1]=="succ":
                 a=succ(atom[2],atom[3])
+            elif atom[1]=="<":
+                a=less(atom[2],atom[3])
             
             else:
                 if (not first) or len(atom)!=4:
@@ -203,7 +238,7 @@ def create_automaton(formula, predicates):
                 if isinstance(atom[2], Automaton) or isinstance(atom[3], Automaton):
                     raise SyntaxError('Invalid form of input formula near "{}".'.format(atom[1]))
 
-                # arguments of succ or sub are in parentheses
+                # arguments of succ or sub can be in parentheses
                 atom.remove('(')
                 atom.remove(')')
                 atom.reverse()
@@ -218,5 +253,53 @@ def create_automaton(formula, predicates):
             stack.append(a)
             first=True
             atom=[]
+
+            # reduction
+            if rabit:
+                a = rabit_reduction(a)
+
+    return a
+
+def rabit_reduction(a):
+    "Using Rabit for reduction"
+
+    alphabet = a.alphabet
+    write_all_transitions(a)
+    write_to_file(a, 'a.ba') # write to a.ba
+    stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
+    output = stream.read()
+    print(output)
+    with open('reduced_10_a.ba') as f:
+        a = load_data(f) # reduced automaton
+    a.alphabet = alphabet
+    
+    return a
+
+def spot_complement(a):
+    "Using Spot for complement"
+
+    alphabet = a.alphabet
+    complete_automaton(a)
+    
+    # write to .ba file
+    write_all_transitions(a)
+    write_to_file(a, 'a.ba')
+    stream = os.popen('cat a.ba')
+    output = stream.read()
+    
+    # convert to .hoa
+    stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
+    stream.wait()
+    
+    # complement using spot
+    stream = subprocess.Popen('autfilt --complement --ba a.hoa >a_neg.hoa', shell=True)
+    stream.wait()
+    
+    # convert to .ba
+    stream = subprocess.Popen('python3 ../ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
+    stream.wait()
+    with open('a.ba') as f:
+        a = load_data(f)
+    a.alphabet = alphabet
 
     return a

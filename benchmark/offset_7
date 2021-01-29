@@ -1,0 +1,21 @@
+#define (offset A B) (neg (exists I (exists J (and (and (sing I) (sing J)) (neg (and (and (sing I) (sing J)) (implies (and (and (succ J I) (sub I A)) (sing I)) (and (sub J B) (sing J)))))))))
+
+(and
+ (and
+  (and
+   (offset V W)
+   (offset W X)
+  )
+  (and
+   (and
+    (offset X Y)
+    (offset Y Z)
+   )
+   (and
+    (offset Z T)
+    (offset T U)
+   )
+  )
+ )
+ (offset U V)
+)
