@@ -30,7 +30,7 @@
 Use syntax similar to syntax for macros in C
 
 ```c
-#define (my_predicate (list_of_arguments)) (...)
+#define (my_predicate list_of_arguments) (...)
 ```
 
 ### Example
@@ -61,3 +61,31 @@ The final automaton is saved in ```a.ba``` and the graph is in ```graph.pdf```
 ### Experiments
 
 Formulae used for experiments are in ```benchmark/```
+
+### Example
+<b>Formula</b>: <span>(x&isin;Y&and;x&notin;Z) &or; (x&isin;Z&and;x&notin;Y)</span>
+
+<b>Input syntax</b>:
+```
+(or
+ (and 
+  (and (sub X Z) (neg (sub X Y))) 
+  (sing X)
+ )
+ (and 
+  (sub X Y) 
+  (and (neg (sub X Z)) (sing X))
+ )
+)
+```
+
+<b>a.ba</b>: <br/>
+[0] <br/>
+X:1|Y:0|Z:1,[0]->[1] <br/>
+X:1|Y:1|Z:0,[0]->[1] <br/>
+X:0|Y:?|Z:?,[1]->[1] <br/>
+X:0|Y:?|Z:?,[0]->[0] <br/>
+[1] <br/>
+
+<b>graph.pdf</b>: <br/>
+<img src="https://github.com/barbora4/projektova-praxe/blob/master/images/f01.png"></img>
