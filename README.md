@@ -43,7 +43,7 @@ Use syntax similar to syntax for macros in C
 
 ## Usage
 ```
-./main.py [--rabit] [--spot]
+./main.py [--rabit] [--spot] [--validity]
 ```
 
 Use ```--rabit``` for reduction with a simulation using lookahead 10 
@@ -53,6 +53,8 @@ Requirements: Install <a href="http://languageinclusion.org/doku.php?id=tools">R
 Use ```--spot``` for complementation using external tool
 
 Requirements: Install <a href="https://spot.lrde.epita.fr/autfilt.html">Spot</a> and download <a href="https://github.com/VeriFIT/ba-compl-eval/tree/master/util">scripts</a> for conversions between .ba and .hoa into a parent directory
+
+Use ```--validity``` to determine validity of the input formula
 
 ### Output
 
