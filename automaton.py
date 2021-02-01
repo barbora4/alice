@@ -8,6 +8,7 @@ import re
 import csv
 from copy import copy
 from dataclasses import dataclass
+import sys
 
 @dataclass
 class Automaton:
@@ -98,35 +99,6 @@ def write_to_file(a,f):
                 f.write('[{}]\n'.format(','.join(map(str,i))))
             else:
                 f.write('[{}]\n'.format(i))
-
-
-def write_to_gv(a,f):
-    """Writes automaton a into .gv file f."""
-
-    with open(f, "w") as f:
-        # beginning
-        f.write("digraph buchi_automaton {\n")
-        f.write("\trankdir=LR;\n")
-        f.write('\tsize="8,5"\n')
-        f.write("\tnode [shape = doublecircle];")
-        for acc in a.accept:
-            f.write(' "{}"'.format(acc))
-        if len(a.accept)!=0:
-            f.write(";\n")
-        else:
-            f.write("\n")
-        if len(a.states)!=0:
-            f.write('\tinit [label="", shape=point]\n')
-        f.write("\tnode [shape = circle];\n")
-
-        # transitions
-        for s in a.start:
-            f.write('\tinit -> "{}"\n'.format(s))
-        for t in a.transitions:
-            f.write('\t"{}" -> "{}" [ label = "{}" ]\n'.format(t[0], t[2], t[1]))
-
-        # end
-        f.write("}\n")
 
 
 def edit_names(a):

@@ -7,6 +7,7 @@
 from automaton import Automaton
 from intersection import *
 from direct import reduction
+import atomic_automata
 
 def tarjan(a):
     """Tarjan's algorithm."""
@@ -68,6 +69,11 @@ def remove_useless_scc(a):
     and no state in scc is accepting or components containing only one accepting state with no transition from it."""
 
     components=tarjan(a)
+    empty = empty_language(a, components)
+    if empty:
+        a = atomic_automata.false()
+        return True # empty language
+
     change=True
     while change:
         change=False
@@ -98,7 +104,24 @@ def remove_useless_scc(a):
                                 if t[0]==state or t[2]==state:
                                     a.transitions.remove(t)
                     components.remove(c)
+    
+    return False # non-empty language
 
+def empty_language(a, components):
+    """Testing language emptiness"""
+
+    empty = True
+    for component in components:
+        if any(state in a.accept for state in component):
+            if len(component)==1:
+                for state in component:
+                    if any(t[0]==t[2] and t[0]==state for t in a.transitions):
+                        empty = False
+                        return empty
+            else:
+                empty = False
+                return empty
+    return empty
 
 def find_and_change_cycles(a):
     """Finds double cycles and reduces them if possible."""
@@ -222,9 +245,14 @@ def remove_unreachable_parts(a):
 def optimize(a):
     edit_names(a)
     a=remove_unreachable_parts(a)
-    remove_useless_scc(a)
-   
+    empty = remove_useless_scc(a)
+    if empty:
+        # empty language
+        a = atomic_automata.false()
+        return True       
+
     reduction(a)
     a=remove_unreachable_parts(a)
     edit_names(a)
     edit_transitions(a)
+    return False

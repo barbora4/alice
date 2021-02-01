@@ -187,10 +187,8 @@ def comp2(a):
                                 transitions.append([states[i], c, new_state])
 
         i+=1
-    print("Complement done")
 
     b=Automaton(states, a.alphabet, transitions, start, accept)
-    write_to_gv(b, 'test.gv')
     optimize(b)
     one_start_state(b)  # automaton will have only one start state
 

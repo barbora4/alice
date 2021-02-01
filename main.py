@@ -10,6 +10,7 @@ from sys import stdin
 from automaton import *
 from parser import *
 from optimize import *
+from graph import *
 import os
 
 file_text=stdin.read()
