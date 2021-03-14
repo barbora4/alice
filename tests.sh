@@ -5,7 +5,7 @@ echo "#,scheweRabit,scheweNoRabit,spotRabit,spotNoRabit"
 
 i=0
 TIMEOUT="1h"
-for FILE in benchmark/f1[4-5]; do
+for FILE in benchmark/*; do
     i="${FILE:11}"
     echo -n "${i},"
     
