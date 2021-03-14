@@ -9,6 +9,7 @@ from automaton import *
 from optimize import *
 from atomic_automata import *
 from intersection import input_equal
+from graph import *
 
 def comp2(a):
     """Constructs complement of a Buchi automaton a."""

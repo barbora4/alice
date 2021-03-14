@@ -1,22 +1,11 @@
-(and (zeroin X)
-(neg
-(exists Z
-(exists Y
-(and (and (sing Z) (sing Y))
-(or
- (and
-  (and
-   (and (and (succ Y Z) (sing Y)) (and (sing Y) (sing Z)))
-   (and (sing Y) (and (sing Z) (sub Z X)))
-  )
-  (and (sing Z) (and (sing Y) (and (sub Y X) (sing Y))))
+(and
+ (zeroin X)
+ (neg (exists Z (exists Y (and (and (sing Z) (sing Y)) (neg (or
+ (and (neg (succ Y Z)) (sing Y))
+ (or
+  (and (and (sub Z X) (sing Z)) (and (neg (sub Y X)) (sing Y)))
+  (and (and (sub Y X) (sing Y)) (and (neg (sub Z X)) (sing Z)))
  )
- (and
-  (and
-   (and (succ Y Z) (sing Y))
-   (and (sing Z) (and (sing Y) (neg (and (sing Z) (sub Z X)))))
-  )
-  (and (sing Z) (and (sing Y) (neg (and (sing Y) (sub Y X)))))
  )
-)
-)))))
+)))
+)))

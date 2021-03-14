@@ -5,8 +5,8 @@
  (and
   (insm I J Z U Y)
   (and
-   (and (insm I J U V Z) (insm I J V X V))
-   (and (insm I J X Y V) (insm I J X Y V))
+   (and (insm I J U V Z) (insm I J V X Y))
+   (and (insm I J X Y V) (insm I J Y Z X))
   )
  )
 )

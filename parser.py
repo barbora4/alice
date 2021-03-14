@@ -10,6 +10,10 @@ from union import *
 from atomic_automata import *
 from complement import *
 from tree import *
+import math
+import itertools
+import re
+from copy import deepcopy
 
 def analyse_predicates(file_text):
     """Analyses user-defined predicates."""
@@ -74,7 +78,22 @@ def analyse_predicates(file_text):
                     variables.append(my_predicate[i])
                 i+=1
 
-            predicates[new_pred]=[variables, definition]
+            a = parse(definition, predicates)
+            tmp = 1
+            for var in variables:
+                for i in range(len(a.transitions)):
+                    a.transitions[i][1] = a.transitions[i][1].replace(var, "#"+str(tmp))
+                new_alphabet = set()
+                for symbol in a.alphabet:
+                    new = symbol.replace(var, "#"+str(tmp))
+                    new_alphabet.add(new)
+                a.alphabet = deepcopy(new_alphabet)
+                tmp += 1
+
+            if "--rabit" in sys.argv:
+                a = rabit_reduction(a)
+            
+            predicates[new_pred]=[len(variables), a]
         
         else:
             break
@@ -159,12 +178,15 @@ def create_automaton(formula, predicates):
 
             # user-defined predicates
             if atom[1] in predicates.keys():
-                tmp=predicates[atom[1]][1]  # predicate definition
-                i=2
-                for var in predicates[atom[1]][0]:
-                    tmp = tmp.replace(var, atom[i]) # replace formal arguments with actual arguments
-                    i+=1
-                a=parse(tmp, predicates) # create automaton for predicate
+                a = deepcopy(predicates[atom[1]][1])
+                for i in range(predicates[atom[1]][0]):
+                    for j in range(len(a.transitions)):
+                        a.transitions[j][1] = a.transitions[j][1].replace("#"+str(i+1), atom[i+2])
+                    new_alphabet = set()
+                    for symbol in a.alphabet:
+                        new = symbol.replace("#"+str(i+1), atom[i+2])
+                        new_alphabet.add(new)
+                    a.alphabet = deepcopy(new_alphabet)
 
             # operations with automata
             elif atom[1]=="exists":
@@ -268,15 +290,24 @@ def rabit_reduction(a):
     write_to_file(a, 'a.ba') # write to a.ba
     stream = os.popen('java -jar ../RABIT250/Reduce.jar a.ba 10')
     output = stream.read()
-    print(output)
+    #print(output)
     with open('reduced_10_a.ba') as f:
         a = load_data(f) # reduced automaton
     a.alphabet = alphabet
     
     return a
 
+
+def myfunc():
+    if not hasattr(myfunc, "counter"):
+        myfunc.counter = 0
+    myfunc.counter += 1
+    return myfunc.counter
+
 def spot_complement(a):
     "Using Spot for complement"
+    
+    a = rabit_reduction(a)
 
     alphabet = a.alphabet
     complete_automaton(a)
@@ -288,18 +319,120 @@ def spot_complement(a):
     output = stream.read()
     
     # convert to .hoa
-    stream = subprocess.Popen('python3 ../ba-compl-eval/util/ba2hoa.py <a.ba >a.hoa', shell=True)
-    stream.wait()
-    
+    with open('a.hoa', 'w+') as f:
+        f.write('HOA: v1\n')
+        f.write('States: {}\n'.format(len(a.states)))
+        f.write('Start:')
+        for state in a.start:
+            f.write(" {}".format(state))
+        f.write('\n')
+        f.write('acc-name: Buchi\n')
+        f.write('Acceptance: 1 Inf(0)\n')
+        f.write('properties: explicit-labels state-acc trans-labels\n')
+        f.write('AP: {}'.format(int(math.log(len(a.alphabet),2))))
+        for c in a.alphabet:
+            i=0
+            symbol_count = 0
+            symbols=list()
+            while i<len(c):
+                f.write(' "{}"'.format(c[i]))
+                symbol_count += 1
+                symbols.append(c[i])
+                i+=4
+            break
+        f.write('\n')
+        f.write('--BODY--\n')
+        for state in a.states:
+            f.write('State: {}'.format(state))
+            if state in a.accept:
+                f.write(' {0}')
+            f.write('\n')
+            for t in a.transitions:
+                if t[0]==state:
+                    string=""
+                    i=0
+                    while i<symbol_count:
+                        if "{}:0".format(symbols[i]) in t[1]:
+                            word = "!{}".format(i)
+                        else:
+                            word = "{}".format(i)
+                        if i==0:
+                            string += word
+                        else:
+                            string += " & {}".format(word)
+                        i+=1
+                    f.write('[{}] {}\n'.format(string, t[2]))
+        f.write('--END--\n')
+
+    # export .hoa files
+    #endFile = 'aut/'+sys.argv[-1]+'-'+str(myfunc())+'.hoa'
+    #stream = subprocess.Popen('cp a.hoa ' + endFile, shell=True)
+    #stream.wait()
+
     # complement using spot
     stream = subprocess.Popen('autfilt --complement --ba a.hoa >a_neg.hoa', shell=True)
     stream.wait()
-    
-    # convert to .ba
-    stream = subprocess.Popen('python3 ../ba-compl-eval/util/hoa2ba.py <a_neg.hoa >a.ba', shell=True)
-    stream.wait()
+
+    b = Automaton(set(), a.alphabet, list(), set(), set())
+    with open('a_neg.hoa') as src:
+        for line in src:
+            if "States" in line:
+                split = line.split()
+                for state in split:
+                    if state.isdigit():
+                        for i in range(int(state)):
+                            b.states.add(str(i))
+            elif "Start" in line:
+                split = line.split()
+                for state in split:
+                    if state.isdigit():
+                        b.start.add(state)
+            elif "State:" in line:
+                split = line.split()
+                for s in split:
+                    if s.isdigit():
+                        current = s
+                    elif "{0}" in s:
+                        b.accept.add(current)
+            elif "[" in line:
+                split = line.split()
+                for state in split:
+                    if state.isdigit():
+                        dst = state
+                
+                newline = re.search('\[(.+?)\]',line).group(1)
+                newline = newline.replace('[','')
+                newline = newline.replace(']','')
+                newline = newline.replace('|','')
+                split = newline.split()
+                for option in split:
+                    string=""
+                    for i in range(symbol_count):
+                        if "!{}".format(i) in option:
+                            if i==0:
+                                string += "{}:0".format(symbols[i])
+                            else:
+                                string += "|{}:0".format(symbols[i])
+                        elif str(i) in option:
+                            if i==0:
+                                string += "{}:1".format(symbols[i])
+                            else:
+                                string += "|{}:1".format(symbols[i])
+                        else:
+                            if i==0:
+                                string += "{}:?".format(symbols[i])
+                            else:
+                                string += "|{}:?".format(symbols[i])
+                    if [current, string, dst] not in b.transitions:
+                        b.transitions.append([current, string, dst])
+        
+        write_all_transitions(b)
+        write_to_file(b, 'a.ba')
+
     with open('a.ba') as f:
         a = load_data(f)
     a.alphabet = alphabet
+
+    a = rabit_reduction(a)
 
     return a
